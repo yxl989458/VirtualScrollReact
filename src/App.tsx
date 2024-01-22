@@ -2,13 +2,13 @@ import React, { useState } from "react"
 
 
 
-function App() {
-  const [dataTotal] = useState(1000000)
+function ScrollVirtual() {
+  const [dataTotal] = useState(100000)
   const itemHeight = 28
   const itemoffset = 8
   const containerHeight = 400
   const [showDataNumber] = useState(Math.round(containerHeight / (itemHeight + itemoffset)))
-  const offsetTotal = (showDataNumber * itemoffset) 
+  const offsetTotal = (showDataNumber * itemoffset)
   const [list] = useState(Array.from({ length: dataTotal }, (_, index) => index + 1))
   const [showData, setShowData] = useState(list.slice(0, showDataNumber))
 
@@ -20,18 +20,11 @@ function App() {
     const newShowData = list.slice(start, end + 1)
     setShowData(newShowData)
   }
-  // function onchangeInput(e: React.ChangeEvent<HTMLInputElement>) {
-  //   const value = Number(e.target.value)
-  //   setDataTotal(value)
-  // }
+
   return (
     <>
-      <div className="mb-10">
-        <div>数据总数: {dataTotal}</div>
-        <div></div>
-      </div>
       <div style={{ height: containerHeight }} className="w-[500px]  overflow-hidden   relative   gap-2 flex flex-col" >
-        <div className="  w-[500px]  absolute left-0 right-4   overflow-auto" onScroll={onScrollContainer} style={{ zIndex: 100, height: containerHeight }}>
+        <div className="w-[500px] overflow-auto" onScroll={onScrollContainer} style={{ zIndex: 100, height: containerHeight }}>
           <div
             className="w-full"
             style={{ height: list.length * itemHeight + offsetTotal }}
@@ -47,4 +40,4 @@ function App() {
   )
 }
 
-export default App
+export default ScrollVirtual
