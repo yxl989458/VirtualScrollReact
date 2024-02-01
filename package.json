@@ -16,7 +16,6 @@
     "antd-style": "^3.6.1",
     "framer-motion": "^11.0.3",
     "highlight.js": "^11.9.0",
-    "highlightjs-copy": "^1.0.5",
     "markdown-it": "^14.0.0",
     "markdown-it-multimd-table": "^4.2.3",
     "prismjs": "^1.29.0",

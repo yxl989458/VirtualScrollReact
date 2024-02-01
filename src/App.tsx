@@ -4,7 +4,7 @@ import SourceList from "./components/Source/SourceList"
 import TitleBlock from "./components/TitleBlock"
 import UserMessage from "./components/UserMessage"
 import { Source } from "./types/source"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import 'highlight.js/styles/atom-one-light.css'
 import AccordionCom from "@components/copilotAccordion/Accordion"
 import AnswerMessageFooter from "@components/Answer/AnswerMessageFooter"
@@ -42,7 +42,7 @@ const App = () => {
     },
   ]
   const [firstSourceList, setFirstSourceList] = useState<Source[]>(sourceList.slice(0, 3))
-
+  const containerRef = useRef<HTMLDivElement>(null)
   const AnswerMessageT = `
   # A demo of \`react-markdown\`
   [![NPM version](https://img.shields.io/npm/v/react-markdown.svg)](https://www.npmjs.com/package/react-markdown)
@@ -93,17 +93,21 @@ ReactDOM.render(
 \`\`\`
   `
   const [AnswerMessageRenderStr, setAnswerMessageRenderStr] = useState('')
-  createMarkdownRenderer().then(mdRender => {
-    const AnswerMessageMar = mdRender(AnswerMessageT)
-    setAnswerMessageRenderStr(AnswerMessageMar)
-  })
+  
+  useEffect(()=>{
+    createMarkdownRenderer().then(mdRender => {
+      console.log(mdRender,'mdRender');
+      const AnswerMessageMar = mdRender(AnswerMessageT)
+      setAnswerMessageRenderStr(AnswerMessageMar)
+    })
+  },[containerRef.current])
 
   const clickSourceMore = () => {
     setFirstSourceList(sourceList)
   }
 
   return (<>
-    <div className="flex justify-center flex-col items-center">
+    <div ref={containerRef}  className="flex justify-center flex-col items-center">
       <div className="bg-[#fcfcf9] p-5 w-[1100px] py-10 border-b">
         <UserMessage message="SpaceX mysterious Boeing 737" />
         <AccordionCom />

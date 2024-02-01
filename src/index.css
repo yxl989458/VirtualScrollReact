@@ -1,27 +1,17 @@
+@import url("https://fonts.googlefonts.cn/css?family=Raleway");
+@import url("https://fonts.font.im/css?family=Source+Sans+Pro");
+@import url("https://fonts.font.im/css?family=Roboto");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
 
-:root{
-    --font-fk-grotesk: "__fkGrotesk_716da7","__fkGrotesk_Fallback_716da7";
-}
-
 
 html body {
-    font-family: 'Raleway', sans-serif;
+    font-family: 'Raleway','Roboto','Source+Sans+Pro' ,sans-serif;
 }
 
 pre{
-    @apply bg-slate-600/70 px-2 py-1 rounded-sm my-2
+    @apply rounded-sm 
 }
-
-.hljs-copy-button{
-    @apply cursor-pointer bg-slate-600
-}
-
-.hljs-copy-wrapper{
-    @apply p-0 
-}
-

@@ -5,23 +5,23 @@ import {
   tsConfigSite,
   tsConfigSiteRef
 } from '@constants'
+import { HLJSPlugin } from 'highlight.js';
 
-import 'highlightjs-copy/dist/highlightjs-copy.min.css'
-import CopyButtonPlugin from 'highlightjs-copy'
-const copyButtonPluginIns = new CopyButtonPlugin()
 export async function createMarkdownRenderer() {
-  const [{ default: markdownIt }, { default: hljs }, { default: javascript }, { default: json }, { default: markdownTable }] =
+  
+  const [{ default: markdownIt }, { default: hljs }, { default: javascript }, { default: json }, { default: markdownTable },{default:copyButtonPlugin}] =
     await Promise.all([
       import(/* webpackChunkName: 'markdown-it' */ 'markdown-it'),
       import('highlight.js/lib/core'),
       import('highlight.js/lib/languages/javascript'),
       import('highlight.js/lib/languages/json'),
       import('markdown-it-multimd-table'),
+      import('@modules/highlightjs-copy')
     ])
-  hljs.registerLanguage('json', json)
+  hljs.registerLanguage('json', json) 
   hljs.registerLanguage('javascript', javascript)
   hljs.addPlugin(
-    copyButtonPluginIns
+    copyButtonPlugin as HLJSPlugin
   );
   hljs.highlightAll();
   const md = markdownIt({
