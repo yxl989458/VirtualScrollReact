@@ -16,6 +16,19 @@ export default defineConfig({
       '@components': join(__dirname, 'src/components/'),
       '@stores': join(__dirname, 'src/stores/'),
       '@types': join(__dirname, 'src/types/'),
+      '@hooks': join(__dirname, 'src/hooks/')
+    }
+  },
+  build:{
+    chunkSizeWarningLimit:1000,
+    rollupOptions:{
+      output:{
+        manualChunks(path){
+          if(path.includes('node_modules')){
+            return 'vendor'
+          }
+        }
+      }
     }
   }
 })

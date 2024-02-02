@@ -6,7 +6,6 @@ interface InputTextearProps {
     inputSendMessage: (val: string) => void
 }
 const InputTextear = ({inputSendMessage}:InputTextearProps) => {
-
     const classNames = {
         start: {
             button: [],
@@ -21,8 +20,6 @@ const InputTextear = ({inputSendMessage}:InputTextearProps) => {
             sendClass: ['flex', 'items-center', 'justify-self-end', 'bg-background', 'rounded-full', 'space-x-2', 'col-start-3', 'row-start-2', '-mr-2']
         }
     }
-
-
     const [inputValue, setInputValue] = useState('');
     const minTextareaHeight = 32;
     const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -33,12 +30,11 @@ const InputTextear = ({inputSendMessage}:InputTextearProps) => {
             textarea.style.height = minTextareaHeight + 'px';
         }
         textarea.style.height = textarea.scrollHeight + 'px';
-        textarea.scrollTop = 0; // Set scrollTop to 0 to make the textarea grow upwards
+        textarea.scrollTop = 0; 
     };
     return (
         <>
-
-            <div style={{ width: '1100px' }} className="z-10 md:bottom-lg  py-sm px-sm md:px-0 fixed flex justify-center pointer-events-none   gap-xl bottom-[64px]   bg-transparent">
+            <div  className="xl:w-[1200px] md:w-[800px] sm:w-[650px]    z-10 md:bottom-lg  py-sm px-sm md:px-0 fixed flex justify-center pointer-events-none   gap-xl bottom-[64px]   bg-transparent">
                 <div className="pointer-events-auto   bg-offset duration-200transition-all  min-h-10 w-[80%]   md:p-3 " style={{ borderRadius: inputValue.length < 30 ? '999px' : '20px' }} >
                     <div style={{ borderRadius: inputValue.length < 30 ? '999px' : '20px' }} className={inputValue.length <= 30 ? classNames.start.boxContainerClass.join(' ') : classNames.end.boxContainerClass.join(' ')}>
                         <div className={inputValue.length <= 30 ? classNames.start.button.join(' ') : classNames.end.button.join(' ')}>
@@ -51,7 +47,10 @@ const InputTextear = ({inputSendMessage}:InputTextearProps) => {
                             <Switch defaultSelected color="default">
                                 <span className="text-xl font-bold">Copilot</span>
                             </Switch>
-                            <Button onClick={() => inputSendMessage(inputValue)} isDisabled={inputValue.length == 0} variant="light" isIconOnly>
+                            <Button onClick={() => {
+                                inputSendMessage(inputValue) 
+                                setInputValue('')
+                            }} isDisabled={inputValue.length == 0} variant="light" isIconOnly>
                                 <Icon icon="iconamoon:send-light" width={32} height={32} color="#39474a" />
                             </Button>
                         </div>

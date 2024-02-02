@@ -9,9 +9,8 @@
 
 
 html body {
-    font-family: 'Raleway','Roboto','Source+Sans+Pro' ,sans-serif;
+    font-family: 'Roboto','Raleway','Source+Sans+Pro' ,sans-serif;
 }
-
 pre{
     @apply rounded-sm 
 }
