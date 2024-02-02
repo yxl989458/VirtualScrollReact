@@ -5,7 +5,7 @@ type SourceMoreProps = {
     clickSourceMore: () => void
 }
 const SourceMore = ({ clickSourceMore }: SourceMoreProps) => {
-    const [isShow, setIsShow] = useState(true)
+    const [isShow, setIsShow] = useState(false)
     const clickSourceMoreHandler = () => {
         clickSourceMore()
         setIsShow(false)

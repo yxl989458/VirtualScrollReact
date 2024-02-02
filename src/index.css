@@ -15,3 +15,16 @@ html body {
 pre{
     @apply rounded-sm 
 }
+table {
+    border-collapse: collapse;
+    text-align: center;
+  }
+  th, td {
+    border: .1rem solid #999;
+    padding: .2em;
+  
+  }
+  th {
+    background-color: #555;
+    color: white;
+  }

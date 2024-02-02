@@ -10,7 +10,7 @@ const SourceList = ({ sourceList, clickSourceMore }: SourceListProps) => {
     return (
         <div className="grid md:grid-cols-4  gap-3  grid-cols-2">
             {
-                sourceList.map((source, index) => <SourceCard source={source} key={index} />)
+                sourceList.map((source) => (<SourceCard source={source} key={source.id} />))
             }
             <SourceMore clickSourceMore={clickSourceMore} />
         </div>

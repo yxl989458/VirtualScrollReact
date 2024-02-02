@@ -14,6 +14,8 @@ export default defineConfig({
       '@modules': join(__dirname, 'src/modules/'),
       '@constants': join(__dirname, 'src/constants/'),
       '@components': join(__dirname, 'src/components/'),
+      '@stores': join(__dirname, 'src/stores/'),
+      '@types': join(__dirname, 'src/types/'),
     }
   }
 })
