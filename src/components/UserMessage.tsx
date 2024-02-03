@@ -4,7 +4,7 @@ type UserMessage = {
 }
 const UserMessage = ({ message }: UserMessage) => {
     return (
-        <p className="text-3xl  font-display break-words [word-break:break-word] whitespace-pre-line  default   font-regular">{message}</p>
+        <p className="md:text-3xl  text-xl font-display break-words [word-break:break-word] whitespace-pre-line  default   font-regular">{message}</p>
 
     )
 }

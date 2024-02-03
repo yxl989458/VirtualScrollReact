@@ -6,7 +6,8 @@ import { resolve, join } from 'node:path'
 export default defineConfig({
   plugins: [react()],
   server: {
-    open: true
+    open: true,
+    host:'0.0.0.0',
   },
   resolve: {
     alias: {

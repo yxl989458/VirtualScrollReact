@@ -14,7 +14,7 @@ import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 const App = () => {
   const { chatHistroyList, setChatHistroyList, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [PropertyRemoteMarkdown] =useState(async()=>await usePropertyRemoteMarkdown())
+  const [PropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   let uuid = uuidV4()
   const containerRef = useRef<HTMLDivElement>(null)
   async function streamWrite(reader: ReadableStreamDefaultReader<Uint8Array>) {
@@ -104,7 +104,7 @@ const App = () => {
   }
   return (<>
     <div ref={containerRef} className="flex justify-center flex-col items-center">
-      <div className="bg-[#fcfcf9] pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen sm:w-[37.5rem] " >
+      <div className="bg-[#fcfcf9] pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
         {
           chatHistroyList.map((item, index) => (<div className="bg-[#fcfcf9] p-5 pb-10    border-b-2" key={index}>
             <UserMessage message={item.userMessage} />

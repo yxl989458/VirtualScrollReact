@@ -27,3 +27,6 @@ table {
     background-color: #555;
     color: white;
   }
+  em,a{
+    word-wrap:break-word;
+  }
