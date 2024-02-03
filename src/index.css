@@ -27,6 +27,6 @@ table {
     background-color: #555;
     color: white;
   }
-  em,a{
+  em,a,p{
     word-wrap:break-word;
   }
