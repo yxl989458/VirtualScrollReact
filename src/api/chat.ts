@@ -11,7 +11,7 @@ interface chatQaRequest {
 }
 export const chatQaRequestWithReader = async (params: chatQaRequest) => {
     try {
-        const response = await POSTRESPONSE("http://ekbapi.opencsg.com:9090/api/search_ask", params)
+        const response = await POSTRESPONSE("/search_ask", params)
         return response.body!.getReader()
     } catch (error) {
         throw new Error(RESPONSEERRORMESSAGE[500])
@@ -21,4 +21,4 @@ export const chatQaRequestWithReader = async (params: chatQaRequest) => {
 
 //获取当前Source 
 
-export const getChatSource = async (conversation_uuid: string) => POST<Source[]>("http://ekbapi.opencsg.com:9090/api/search_conv_rel_info", { conversation_uuid })
+export const getChatSource = async (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })

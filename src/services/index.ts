@@ -1,13 +1,15 @@
 //fetch封装
 
+import { APIBASEURL } from "@constants/base";
+
 interface State<T> {
     code: number,
     data: T,
     msg: string
 }
-
 export const fetchIns = async (url: string, options?: RequestInit): Promise<Response> => {
-    const res = await fetch(url, options);
+    const urls = APIBASEURL + url
+    const res = await fetch(urls, options);
     return res
 }
 
