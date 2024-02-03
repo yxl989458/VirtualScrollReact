@@ -18,18 +18,18 @@ const AnswerMessageFooter = () => {
             </div>
             <div className="flex md:gap-4">
                 <Tooltip content="Inaccurate or unhelpful" className="md:text-xl md:font-bold">
-                    <Button variant="light" isIconOnly startContent={<Icon icon="iconamoon:dislike-duotone" width={28} height={28} />}>
+                    <Button variant="light" isIconOnly startContent={<Icon icon="iconamoon:dislike-duotone" width={24} height={24} />}>
                     </Button>
                 </Tooltip>
                 <Tooltip content="View Sources" className="md:text-xl md:font-bold">
-                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:calendar-view-week-outline" width={28} height={28} />}>
+                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:calendar-view-week-outline" width={24} height={24} />}>
                     </Button>
                 </Tooltip>   <Tooltip content="Copy" className="md:text-xl md:font-bold">
-                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:content-copy-outline" width={28} height={28} />}>
+                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:content-copy-outline" width={24} height={24} />}>
                     </Button>
                 </Tooltip>
                 <Tooltip content="Edit Query" className="md:text-xl md:font-bold">
-                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:edit-calendar-outline" width={28} height={28} />}>
+                    <Button variant="light" isIconOnly startContent={<Icon icon="material-symbols:edit-calendar-outline" width={24} height={24} />}>
                     </Button>
                 </Tooltip>
             </div>

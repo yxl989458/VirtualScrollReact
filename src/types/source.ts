@@ -1,7 +1,9 @@
 export type Source = {
-    avatar: string
-    name: string
-    desc: string
-    url: string
-    id:string
+    "site_name": string,
+    "icon_url": string,
+    "title": string,
+    "url": string,
+    "snippet": string
+    id: string
 }
+

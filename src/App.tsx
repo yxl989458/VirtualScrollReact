@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import AnswerMessage from "./components/Answer/AnswerMessage"
 import SourceList from "./components/Source/SourceList"
 import TitleBlock from "./components/TitleBlock"
@@ -9,49 +10,34 @@ import InputTextear from "@components/Input"
 import { v4 as uuidV4 } from "uuid"
 import useChatHistroyStore, { chatHistroyListDefault } from "@stores/modules/chatHistroy"
 import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
-import type { Source } from "@/types/source"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
+import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
+import { chatQaRequestWithReader, getChatSource } from "@api/chat"
+import { useStreamRead } from "@hooks/useStreamRead"
 const App = () => {
   const { chatHistroyList, setChatHistroyList, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [PropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   let uuid = uuidV4()
   const containerRef = useRef<HTMLDivElement>(null)
-  async function streamWrite(reader: ReadableStreamDefaultReader<Uint8Array>) {
-    const textDecoder = new TextDecoder();
-    let result = true;
-    let output = "";
-    while (result) {
-      try {
-        const { done, value } = await reader.read();
-        if (done) {
-          result = false;
-          uuid = uuidV4()
-          updateLoadingAnswer(false)
-        }
-        const chunkText = textDecoder.decode(value);
-        output += chunkText;
+  async function requestQa(inputVal: string) {
+    try {
+      const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      const { streamRead } = useStreamRead(reader)
+      streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
         updateAnswerMessageLast(AnswerMessageFormat)
-      } catch (error) {
-        console.error(error);
-        break
-      }
-    }
-  }
-  function requestQa(inputVal: string) {
-    fetch('http://ekbapi.opencsg.com:9090/api/search_ask', {
-      method: 'POST',
-      body: JSON.stringify({
-        conversation_uuid: uuid,
-        ask_type: "single_file",
-        llm_type: "1",
-        question: inputVal
+      }, (isDone: boolean) => {
+        if (isDone) {
+          uuid = uuidV4()
+          updateLoadingAnswer(false)
+          return
+        }
       })
-    }).then(response => {
-      const reader = response!.body!.getReader();
-      streamWrite(reader)
-    })
+    } catch (error) {
+      updateLoadingAnswer(false)
+      updateAnswerMessageLast(RESPONSEERRORMESSAGE[500])
+    }
   }
   const clickSourceMore = () => {
     // setFirstSourceList(sourceList)
@@ -71,36 +57,19 @@ const App = () => {
       inline: "nearest"
     });
   }
-  type SourceListApi = {
-    snippet: string
-    title: string,
-    url: string
-  }
+
   const getSourceListByUuid = async (uuid: string) => {
-    fetch('http://ekbapi.opencsg.com:9090/api/search_conv_rel_info', {
-      method: "post",
-      body: JSON.stringify({
-        conversation_uuid: uuid
-      })
-    }).then(async response => {
-      const data = await response.json() as { data: SourceListApi[]; code: number }
-      if (data.code) {
-        getSourceListByUuid(uuid)
-        return
-      } else {
+    try {
+      const { data } = await getChatSource(uuid)
+      if (data === null) getSourceListByUuid(uuid)
+      else {
         updateLoadingSourceLast(false)
-        const sourceList = data.data.map((item): Source => {
-          return {
-            url: item.url,
-            desc: item.snippet,
-            name: "AnswerAI",
-            avatar: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-            id: uuidV4()
-          }
-        })
-        updateSourceListLast(sourceList)
+        updateSourceListLast(data.map((item) => ({ ...item, id: uuidV4() })))
       }
-    })
+    } catch (error) {
+      updateLoadingSourceLast(false)
+      updateSourceListLast([])
+    }
   }
   return (<>
     <div ref={containerRef} className="flex justify-center flex-col items-center">

@@ -30,3 +30,7 @@ table {
   em,a,p{
     word-wrap:break-word;
   }
+a{
+  color: #2b6cb0;
+  text-decoration: none;
+}

@@ -11,7 +11,7 @@ const TitleBlock = ({ icon, text ,loading}: TitleBlockProps) => {
         <>
             <div className='flex items-center gap-2 my-6'>
                 <Icon icon={icon} className={loading ? 'animate-spin' : ''}  width={28} height={28}/>
-                <span className='font-display  md:text-2xl text-xl letter tracking-wide'>{text}</span>
+                <span className='font-display  md:text-xl text-lg  tracking-wide'>{text}</span>
             </div>
         </>
     )
