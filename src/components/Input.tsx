@@ -45,7 +45,7 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
                                 <Icon icon="material-symbols:add-circle-outline" width={32} height={32} color="#39474a" />
                             </Button>
                         </div>
-                        <textarea ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="Ask follow-up questions" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onInput={handleInputChange} />
+                        <textarea ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="Ask follow-up questions" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onChange={handleInputChange} onInput={handleInputChange} />
                         <div className={inputValue.length <= 30 ? [...classNames.start.sendClass,].join(' ') : classNames.end.sendClass.join(' ')}>
                             <Switch color="default" className="md:block hidden">
                                 <span className="text-xl font-bold">Copilot</span>
