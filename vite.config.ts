@@ -17,7 +17,6 @@ export default defineConfig(() => {
         '@constants': join(__dirname, 'src/constants/'),
         '@components': join(__dirname, 'src/components/'),
         '@stores': join(__dirname, 'src/stores/'),
-        '@types': join(__dirname, 'src/types/'),
         '@hooks': join(__dirname, 'src/hooks/'),
         "@services": join(__dirname, 'src/services/'),
         "@api": join(__dirname, 'src/api/')

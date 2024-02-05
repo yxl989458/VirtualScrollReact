@@ -39,9 +39,7 @@ const App = () => {
       updateAnswerMessageLast(RESPONSEERRORMESSAGE[500])
     }
   }
-  const clickSourceMore = () => {
-    // setFirstSourceList(sourceList)
-  }
+
   const inputSendMessage = async (val: string) => {
     await setChatHistroyList({
       ...chatHistroyListDefault,
@@ -80,7 +78,7 @@ const App = () => {
             {/* <AccordionCom /> */}
             <TitleBlock icon="material-symbols:format-align-right-rounded" text="Source" />
             {
-              item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} clickSourceMore={clickSourceMore} />
+              item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
             }
             {
               item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="Answer" />

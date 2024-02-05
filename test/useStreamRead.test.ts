@@ -1,5 +1,5 @@
-import { useStreamRead } from "@hooks/useStreamRead";
-import { POSTRESPONSE } from "@services";
+import { useStreamRead } from "@/hooks/useStreamRead";
+import { POSTRESPONSE } from "@/services";
 import { v4 } from "uuid";
 import { describe, expect, it } from "vitest";
 
