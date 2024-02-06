@@ -20,4 +20,4 @@ export const chatQaRequestWithReader = async (params: chatQaRequest) => {
 
 
 //获取当前Source 
-export const getchatSource = (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })
+export const getChatSource = (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })
