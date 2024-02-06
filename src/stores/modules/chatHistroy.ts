@@ -4,7 +4,7 @@ import { create } from 'zustand'
 import { devtools, persist } from 'zustand/middleware'
 
 
-type chatHistroyList = {
+export type chatHistroyType = {
     sourceList: Source[]
     AnswerMessage: string
     uuid: string,
@@ -12,7 +12,7 @@ type chatHistroyList = {
     loadingAnswer?: boolean
     loadingSource?: boolean
 }
-export const chatHistroyListDefault: chatHistroyList = {
+export const chatHistroyListDefault: chatHistroyType = {
     sourceList: [],
     uuid: v4(),
     userMessage: '',
@@ -21,9 +21,9 @@ export const chatHistroyListDefault: chatHistroyList = {
     loadingSource: true
 }
 interface chatHistroyState {
-    chatHistroyList: chatHistroyList[] | []
-    setChatHistroyList: (chatHistroyList: chatHistroyList) => void
-    updateChatHistroyListLast: (chatHistroyList: chatHistroyList) => void
+    chatHistroyList: chatHistroyType[] | []
+    setChatHistroyList: (chatHistroyList: chatHistroyType) => void
+    updateChatHistroyListLast: (chatHistroyList: chatHistroyType) => void
     setSourceList: (sourceList: Source[]) => void
     updateSourceListLast: (sourceList: Source[]) => void
     setAnswerMessage: (AnswerMessage: string) => void
@@ -34,6 +34,12 @@ interface chatHistroyState {
     updateUuid: (uuid: string) => void
     updateLoadingAnswer: (updateLoadingAnswer: boolean) => void
     updateLoadingSourceLast: (loadingSource: boolean) => void
+    getChatHistroyLast: () => chatHistroyType,
+    getChatHistroyByUuid: (uuid: string) => chatHistroyType | undefined,
+    updateChatHistroySourceListByUuid: (chatHistroy: Source[], uuid: string) => void
+    updateChatHistroyAnswerMessageByUuid: (AnswerMessage: string, uuid: string) => void
+    updateChatHistroyLoadingAnswerByUuid: (LoadingAnswer: boolean, uuid: string) => void
+    updateChatHistroyLoadingSourceByUuid: (LoadingSource: boolean, uuid: string) => void
 }
 
 const useChatHistroyState = create<chatHistroyState>()(
@@ -41,9 +47,11 @@ const useChatHistroyState = create<chatHistroyState>()(
         persist(
             (set, get) => ({
                 chatHistroyList: [],
-                setChatHistroyList: (chatHistroyList: chatHistroyList) => set((state) => ({ chatHistroyList: [...state.chatHistroyList, chatHistroyList] })),
+                getChatHistroyLast: () => get().chatHistroyList[get().chatHistroyList.length - 1],
+                getChatHistroyByUuid: (uuid: string) => get().chatHistroyList.find((chatHistroy) => chatHistroy.uuid === uuid),
+                setChatHistroyList: (chatHistroyList: chatHistroyType) => set((state) => ({ chatHistroyList: [...state.chatHistroyList, chatHistroyList] })),
                 getChatHistroyList: () => get().chatHistroyList,
-                updateChatHistroyListLast: (chatHistroyList: chatHistroyList) => set((state) => ({ chatHistroyList: [...state.chatHistroyList.slice(0, state.chatHistroyList.length - 1), chatHistroyList] })),
+                updateChatHistroyListLast: (chatHistroyList: chatHistroyType) => set((state) => ({ chatHistroyList: [...state.chatHistroyList.slice(0, state.chatHistroyList.length - 1), chatHistroyList] })),
                 setSourceList: (sourceList: Source[]) => set((state) => ({ chatHistroyList: [...state.chatHistroyList, { ...state.chatHistroyList[state.chatHistroyList.length - 1], sourceList }] })),
                 updateSourceListLast: (sourceList: Source[]) => set((state) => ({ chatHistroyList: [...state.chatHistroyList.slice(0, state.chatHistroyList.length - 1), { ...state.chatHistroyList[state.chatHistroyList.length - 1], sourceList }] })),
                 setAnswerMessage: (AnswerMessage: string) => set((state) => ({ chatHistroyList: [...state.chatHistroyList, { ...state.chatHistroyList[state.chatHistroyList.length - 1], AnswerMessage }] })),
@@ -54,6 +62,35 @@ const useChatHistroyState = create<chatHistroyState>()(
                 updateUuid: (uuid: string) => set((state) => ({ chatHistroyList: [...state.chatHistroyList, { ...state.chatHistroyList[state.chatHistroyList.length - 1], uuid }] })),
                 updateLoadingAnswer: (loadingAnswer: boolean) => set((state) => ({ chatHistroyList: [...state.chatHistroyList.slice(0, state.chatHistroyList.length - 1), { ...state.chatHistroyList[state.chatHistroyList.length - 1], loadingAnswer }] })),
                 updateLoadingSourceLast: (loadingSource: boolean) => set((state) => ({ chatHistroyList: [...state.chatHistroyList.slice(0, state.chatHistroyList.length - 1), { ...state.chatHistroyList[state.chatHistroyList.length - 1], loadingSource }] })),
+                updateChatHistroySourceListByUuid: (sourceList: Source[], uuid: string) => set((state) => {
+                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
+                    state.chatHistroyList[index].sourceList = sourceList
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                }),
+                updateChatHistroyAnswerMessageByUuid: (AnswerMessage: string, uuid: string) => set((state) => {
+                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
+                    state.chatHistroyList[index].AnswerMessage = AnswerMessage
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                }),
+                updateChatHistroyLoadingAnswerByUuid: (LoadingAnswer: boolean, uuid: string) => set((state) => {
+                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
+                    state.chatHistroyList[index].loadingAnswer = LoadingAnswer
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                }),
+                updateChatHistroyLoadingSourceByUuid: (LoadingSource: boolean, uuid: string) => set((state) => {
+                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
+                    state.chatHistroyList[index].loadingSource =LoadingSource
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                })
+
             }),
             {
 

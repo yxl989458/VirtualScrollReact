@@ -1,6 +1,6 @@
 import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
-import { POST, POSTRESPONSE } from "@services"
-import type{ Source } from "@/types/source"
+import type { Source } from "@/types/source"
+import { POST, POSTRESPONSE } from "@services/index"
 
 
 interface chatQaRequest {
@@ -20,5 +20,4 @@ export const chatQaRequestWithReader = async (params: chatQaRequest) => {
 
 
 //获取当前Source 
-
-export const getChatSource = async (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })
+export const getchatSource = (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })

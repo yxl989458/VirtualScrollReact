@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Button, Switch } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useRef, useState } from "react";
 
 interface InputTextearProps {
@@ -47,9 +47,9 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
                         </div>
                         <textarea ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="Ask follow-up questions" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onChange={handleInputChange} onInput={handleInputChange} />
                         <div className={inputValue.length <= 30 ? [...classNames.start.sendClass,].join(' ') : classNames.end.sendClass.join(' ')}>
-                            <Switch color="default" className="md:block hidden">
+                            {/* <Switch color="default" className="md:block hidden">
                                 <span className="text-xl font-bold">Copilot</span>
-                            </Switch>
+                            </Switch> */}
                             <Button onClick={() => {
                                 inputSendMessage(inputValue)
                                 textareaRef.current!.style.height = 32 + 'px';
@@ -64,5 +64,4 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
         </>
     )
 }
-
 export default InputTextear

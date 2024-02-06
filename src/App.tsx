@@ -15,27 +15,39 @@ import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 const App = () => {
-  const { chatHistroyList, setChatHistroyList, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
+  const { chatHistroyList, setChatHistroyList, updateChatHistroySourceListByUuid,
+    updateChatHistroyAnswerMessageByUuid,
+    updateChatHistroyLoadingAnswerByUuid,
+    updateChatHistroyLoadingSourceByUuid, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [PropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
-  let uuid = uuidV4()
+  const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
-  async function requestQa(inputVal: string) {
+  async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
     try {
       const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      getSourceListByUuid(uuid)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
+        if (isReload && reloadUuid) {
+          return updateChatHistroyAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
+        }
         updateAnswerMessageLast(AnswerMessageFormat)
       }, (isDone: boolean) => {
         if (isDone) {
-          uuid = uuidV4()
+          if (isReload && reloadUuid) {
+            updateChatHistroyLoadingAnswerByUuid(false, reloadUuid)
+          }
+          setUuid(uuidV4())
           updateLoadingAnswer(false)
           return
         }
       })
     } catch (error) {
       updateLoadingAnswer(false)
+      updateLoadingSourceLast(false)
+      updateSourceListLast([])
       updateAnswerMessageLast(RESPONSEERRORMESSAGE[500])
     }
   }
@@ -43,9 +55,9 @@ const App = () => {
   const inputSendMessage = async (val: string) => {
     await setChatHistroyList({
       ...chatHistroyListDefault,
+      uuid,
       userMessage: val
     })
-    getSourceListByUuid(uuid)
     updateLoadingSourceLast(true)
     updateLoadingAnswer(true)
     requestQa(val)
@@ -55,7 +67,6 @@ const App = () => {
       inline: "nearest"
     });
   }
-
   const getSourceListByUuid = async (uuid: string) => {
     try {
       const { data } = await getChatSource(uuid)
@@ -63,11 +74,22 @@ const App = () => {
       else {
         updateLoadingSourceLast(false)
         updateSourceListLast(data.map((item) => ({ ...item, id: uuidV4() })))
+        setUuid(uuidV4())
       }
     } catch (error) {
       updateLoadingSourceLast(false)
       updateSourceListLast([])
+      return
     }
+  }
+  const reloadChat = async (updateUuid: string) => {
+    console.log("reloadChat", updateUuid);
+
+    updateChatHistroyAnswerMessageByUuid("", updateUuid)
+    updateChatHistroyLoadingAnswerByUuid(true, updateUuid)
+    updateChatHistroyLoadingSourceByUuid(true, updateUuid)
+    updateChatHistroySourceListByUuid([], updateUuid)
+    await requestQa(getChatHistroyByUuid(updateUuid)!.userMessage, true, updateUuid)
   }
   return (<>
     <div ref={containerRef} className="flex justify-center flex-col items-center">
@@ -84,7 +106,7 @@ const App = () => {
               item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="Answer" />
             }
             <AnswerMessage message={item.AnswerMessage} />
-            <AnswerMessageFooter />
+            <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
           </div>))
         }
         <InputTextear inputSendMessage={inputSendMessage} />
