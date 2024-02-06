@@ -18,9 +18,9 @@ const App = () => {
   const { chatHistroyList, setChatHistroyList, updateChatHistroySourceListByUuid,
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
-    updateChatHistroyLoadingSourceByUuid, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
+    updateChatHistroyLoadingSourceByUuid,updateChatHistroyOriginalAnswerMessageByUuid,updateChatHistroyOriginalAnswerMessageLast, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [PropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
+  const [PropertyRemoteMarkdown,setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
@@ -31,9 +31,11 @@ const App = () => {
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
         if (isReload && reloadUuid) {
+          updateChatHistroyOriginalAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
           return updateChatHistroyAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
         }
         updateAnswerMessageLast(AnswerMessageFormat)
+        updateChatHistroyOriginalAnswerMessageLast(output)
       }, (isDone: boolean) => {
         if (isDone) {
           if (isReload && reloadUuid) {
@@ -41,6 +43,7 @@ const App = () => {
           }
           setUuid(uuidV4())
           updateLoadingAnswer(false)
+          setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
           return
         }
       })

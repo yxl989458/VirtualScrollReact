@@ -13,7 +13,7 @@ const AnswerMessageFooter = ({ chatHistroy, reloadChat }: AnswerMessageFooter) =
     const [copyDone, setCopyDone] = useState(false)
     const [reloadDone, setReloadDone] = useState(false)
     function CopyHandler() {
-        Copy(chatHistroy.AnswerMessage)
+        Copy(chatHistroy.originalAnswerMessage!)
         // navigator.clipboard.writeText(chatHistroy.AnswerMessage)
         setCopyDone(true)
         setTimeout(() => {

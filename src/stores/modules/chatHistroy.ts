@@ -11,6 +11,8 @@ export type chatHistroyType = {
     userMessage: string
     loadingAnswer?: boolean
     loadingSource?: boolean
+    originalAnswerMessage: string
+
 }
 export const chatHistroyListDefault: chatHistroyType = {
     sourceList: [],
@@ -18,7 +20,8 @@ export const chatHistroyListDefault: chatHistroyType = {
     userMessage: '',
     AnswerMessage: '',
     loadingAnswer: true,
-    loadingSource: true
+    loadingSource: true,
+    originalAnswerMessage: ''
 }
 interface chatHistroyState {
     chatHistroyList: chatHistroyType[] | []
@@ -40,6 +43,9 @@ interface chatHistroyState {
     updateChatHistroyAnswerMessageByUuid: (AnswerMessage: string, uuid: string) => void
     updateChatHistroyLoadingAnswerByUuid: (LoadingAnswer: boolean, uuid: string) => void
     updateChatHistroyLoadingSourceByUuid: (LoadingSource: boolean, uuid: string) => void
+    updateChatHistroyOriginalAnswerMessageByUuid:(originalAnswerMessage: string, uuid: string) => void,
+    updateChatHistroyOriginalAnswerMessageLast:(originalAnswerMessage: string) => void
+    
 }
 
 const useChatHistroyState = create<chatHistroyState>()(
@@ -65,6 +71,20 @@ const useChatHistroyState = create<chatHistroyState>()(
                 updateChatHistroySourceListByUuid: (sourceList: Source[], uuid: string) => set((state) => {
                     const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
                     state.chatHistroyList[index].sourceList = sourceList
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                }),
+                updateChatHistroyOriginalAnswerMessageByUuid: (originalAnswerMessageByUuid: string, uuid: string) => set((state) => {
+                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
+                    state.chatHistroyList[index].originalAnswerMessage = originalAnswerMessageByUuid
+                    return {
+                        chatHistroyList: state.chatHistroyList
+                    }
+                }),
+                updateChatHistroyOriginalAnswerMessageLast: (originalAnswerMessage: string) => set((state) => {
+                    const index = state.chatHistroyList.length - 1
+                    state.chatHistroyList[index].originalAnswerMessage = originalAnswerMessage
                     return {
                         chatHistroyList: state.chatHistroyList
                     }
