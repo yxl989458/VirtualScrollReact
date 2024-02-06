@@ -26,7 +26,7 @@ const App = () => {
   async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
     try {
       const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
-      getSourceListByUuid(uuid)
+      getSourceListByUuid(reloadUuid || uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
@@ -67,12 +67,18 @@ const App = () => {
       inline: "nearest"
     });
   }
-  const getSourceListByUuid = async (uuid: string) => {
+  const getSourceListByUuid = async (uuidP: string,isReload: boolean = false) => {
     try {
-      const { data } = await getChatSource(uuid)
-      if (data === null) getSourceListByUuid(uuid)
+      const { data } = await getChatSource(uuidP)
+      if (data === null) getSourceListByUuid(uuidP)
       else {
         updateLoadingSourceLast(false)
+        if(isReload){
+        updateChatHistroyLoadingSourceByUuid(false, uuidP)
+        updateChatHistroySourceListByUuid(data.map((item) => ({ ...item, id: uuidV4() })), uuidP)
+        setUuid(uuidV4())
+        return
+        }
         updateSourceListLast(data.map((item) => ({ ...item, id: uuidV4() })))
         setUuid(uuidV4())
       }
@@ -83,8 +89,6 @@ const App = () => {
     }
   }
   const reloadChat = async (updateUuid: string) => {
-    console.log("reloadChat", updateUuid);
-
     updateChatHistroyAnswerMessageByUuid("", updateUuid)
     updateChatHistroyLoadingAnswerByUuid(true, updateUuid)
     updateChatHistroyLoadingSourceByUuid(true, updateUuid)
