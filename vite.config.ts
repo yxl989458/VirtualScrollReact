@@ -19,7 +19,8 @@ export default defineConfig(() => {
         '@stores': join(__dirname, 'src/stores/'),
         '@hooks': join(__dirname, 'src/hooks/'),
         "@services": join(__dirname, 'src/services/'),
-        "@api": join(__dirname, 'src/api/')
+        "@api": join(__dirname, 'src/api/'),
+        "@utils": join(__dirname, 'src/utils/')
       }
     },
     build: {

@@ -1,6 +1,7 @@
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { Button, Tooltip } from "@nextui-org/react"
 import { chatHistroyType } from "@stores/modules/chatHistroy"
+import { Copy } from "@utils/copy"
 import { useState } from "react"
 
 type AnswerMessageFooter = {
@@ -12,7 +13,8 @@ const AnswerMessageFooter = ({ chatHistroy, reloadChat }: AnswerMessageFooter) =
     const [copyDone, setCopyDone] = useState(false)
     const [reloadDone, setReloadDone] = useState(false)
     function CopyHandler() {
-        navigator.clipboard.writeText(chatHistroy.AnswerMessage)
+        Copy(chatHistroy.AnswerMessage)
+        // navigator.clipboard.writeText(chatHistroy.AnswerMessage)
         setCopyDone(true)
         setTimeout(() => {
             setCopyDone(false)

@@ -1,5 +1,6 @@
 import type{ HLJSPlugin, HighlightResult } from "highlight.js";
 import "./styles/highlightjs-copy.css"
+import { Copy } from "@utils/copy";
 
 class CopyButtonPlugin implements  HLJSPlugin{
   "after:highlightElement"({ el, text}:{ el: Element, result: HighlightResult, text: string}) {
@@ -16,7 +17,7 @@ class CopyButtonPlugin implements  HLJSPlugin{
       window.getComputedStyle(el).backgroundColor
     );
     button.onclick = function () {
-      if (!navigator.clipboard) return;
+      Copy(text)
       navigator.clipboard
         .writeText(text)
         .then(function () {
