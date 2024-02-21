@@ -3,7 +3,7 @@ import AnswerMessage from "./components/Answer/AnswerMessage"
 import SourceList from "./components/Source/SourceList"
 import TitleBlock from "./components/TitleBlock"
 import UserMessage from "./components/UserMessage"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import 'highlight.js/styles/atom-one-light.css'
 import AnswerMessageFooter from "@components/Answer/AnswerMessageFooter"
 import InputTextear from "@components/Input"
@@ -18,9 +18,9 @@ const App = () => {
   const { chatHistroyList, setChatHistroyList, updateChatHistroySourceListByUuid,
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
-    updateChatHistroyLoadingSourceByUuid,updateChatHistroyOriginalAnswerMessageByUuid,updateChatHistroyOriginalAnswerMessageLast, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
+    updateChatHistroyLoadingSourceByUuid, updateChatHistroyOriginalAnswerMessageByUuid, updateChatHistroyOriginalAnswerMessageLast, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const [PropertyRemoteMarkdown,setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
+  const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
@@ -54,6 +54,13 @@ const App = () => {
       updateAnswerMessageLast(RESPONSEERRORMESSAGE[500])
     }
   }
+  useEffect(() => {
+    document.body.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest"
+    });
+  }, [containerRef.current])
 
   const inputSendMessage = async (val: string) => {
     await setChatHistroyList({
@@ -70,17 +77,17 @@ const App = () => {
       inline: "nearest"
     });
   }
-  const getSourceListByUuid = async (uuidP: string,isReload: boolean = false) => {
+  const getSourceListByUuid = async (uuidP: string, isReload: boolean = false) => {
     try {
       const { data } = await getChatSource(uuidP)
       if (data === null) getSourceListByUuid(uuidP)
       else {
         updateLoadingSourceLast(false)
-        if(isReload){
-        updateChatHistroyLoadingSourceByUuid(false, uuidP)
-        updateChatHistroySourceListByUuid(data.map((item) => ({ ...item, id: uuidV4() })), uuidP)
-        setUuid(uuidV4())
-        return
+        if (isReload) {
+          updateChatHistroyLoadingSourceByUuid(false, uuidP)
+          updateChatHistroySourceListByUuid(data.map((item) => ({ ...item, id: uuidV4() })), uuidP)
+          setUuid(uuidV4())
+          return
         }
         updateSourceListLast(data.map((item) => ({ ...item, id: uuidV4() })))
         setUuid(uuidV4())
