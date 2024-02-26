@@ -15,11 +15,21 @@ import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 const App = () => {
-  const { chatHistroyList, setChatHistroyList, updateChatHistroySourceListByUuid,
+  const {
+    chatHistroyList,
+    setChatHistroyList,
+    updateChatHistroySourceListByUuid,
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
-    updateChatHistroyLoadingSourceByUuid, updateChatHistroyOriginalAnswerMessageByUuid, updateChatHistroyOriginalAnswerMessageLast, getChatHistroyByUuid, updateAnswerMessageLast, updateSourceListLast, updateLoadingAnswer, updateLoadingSourceLast } = useChatHistroyStore()
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+    updateChatHistroyLoadingSourceByUuid,
+    updateChatHistroyOriginalAnswerMessageByUuid,
+    updateChatHistroyOriginalAnswerMessageLast,
+    getChatHistroyByUuid, updateAnswerMessageLast,
+    updateSourceListLast,
+    updateLoadingAnswer,
+    updateLoadingSourceLast
+  } = useChatHistroyStore()
+  
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
