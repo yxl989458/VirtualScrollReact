@@ -36,24 +36,24 @@ const AnswerMessageFooter = ({ chatHistroy, reloadChat }: AnswerMessageFooter) =
                     </Button>
                 </Tooltip> */}
                 <Tooltip content="Rewrite This Answer" className="text-xl font-bold">
-                    <Button onClick={reloadChatHandler} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon className={reloadDone ? 'animate-spin' : ''} icon="material-symbols:autorenew-outline-rounded" width={24} height={24} />}>
-                        Rewrite
+                    <Button onClick={reloadChatHandler} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon color="#999" className={reloadDone ? 'animate-spin' : ''} icon="material-symbols:autorenew-outline-rounded" width={24} height={24} />}>
+                        <span className="text-[#999]">Rewrite</span>
                     </Button>
                 </Tooltip>
                 <Tooltip content="Copy" className="md:text-xl md:font-bold">
                     {
                         copyDone ?
 
-                            <Button className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon  icon="lucide:copy-check" width={24} height={24} />}>
-                                Copy Done
+                            <Button className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon color="#999" icon="lucide:copy-check" width={24} height={24} />}>
+                                <span className="text-[#999]">Copy Done</span>
                             </Button>
                             // <Button variant="light" isIconOnly startContent={<Icon icon="lucide:copy-check" width={24} height={24} />}>
                             // </Button> 
                             :
                             // <Button onClick={CopyHandler} variant="light" isIconOnly startContent={<Icon icon="lucide:copy" width={24} height={24} />}>
                             // </Button>
-                            <Button onClick={CopyHandler} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon  icon="lucide:copy" width={24} height={24} />}>
-                                Copy
+                            <Button onClick={CopyHandler} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon icon="lucide:copy" width={24} color="#999" height={24} />}>
+                                <span className="text-[#999]">Copy</span>
                             </Button>
                     }
                 </Tooltip>

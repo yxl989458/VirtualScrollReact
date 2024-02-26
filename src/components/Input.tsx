@@ -35,6 +35,13 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
         textarea.style.height = textarea.scrollHeight + 'px';
         textarea.scrollTop = 0;
     };
+    const textareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            inputSendMessage(inputValue);
+            setInputValue('');
+        }
+    }
     return (
         <>
             <div className="xl:w-[1200px] md:w-[800px] sm:w-[650px]  w-[440px] left-[50%] translate-x-[-50%]   z-10   py-sm px-sm md:px-0 fixed flex justify-center pointer-events-none   gap-xl md:bottom-[64px] bottom-[20px]   bg-transparent">
@@ -45,7 +52,7 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
                                 <Icon icon="material-symbols:add-circle-outline" width={32} height={32} color="#39474a" />
                             </Button>
                         </div>
-                        <textarea ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="Ask follow-up questions" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onChange={handleInputChange} onInput={handleInputChange} />
+                        <textarea onKeyDown={textareaKeyDown} ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="Ask follow-up questions" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onChange={handleInputChange} onInput={handleInputChange} />
                         <div className={inputValue.length <= 30 ? [...classNames.start.sendClass,].join(' ') : classNames.end.sendClass.join(' ')}>
                             {/* <Switch color="default" className="md:block hidden">
                                 <span className="text-xl font-bold">Copilot</span>
