@@ -24,7 +24,7 @@
     "baseUrl": ".",
     "paths": {
       "@/": [
-        "src"
+        "src/"
       ],
       "@*": [
         "src/*"
@@ -35,6 +35,11 @@
     }
   },
   "include": [
-    "src"
+    "src",
+    "."
   ],
+  "exclude": [
+    "node_modules",
+    "dist",
+  ]
 }
