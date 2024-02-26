@@ -10,14 +10,14 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
     const classNames = {
         start: {
             button: [],
-            boxContainerClass: ['items-center', 'duration-200', 'transition-all', 'border-2', 'flex', 'w-full', 'gap-5', 'outline-none', 'p-1 px-2', 'focus:outline-none', 'focus:ring-borderMain', 'font-sans', 'bg-[#fff]'],
-            textareaClass: ['pl-2', 'text-gray-500', 'md:placeholder:leading-8', 'placeholder:leading-8', 'max-h-[190px]', 'duration-200', 'transition-all', 'focus:outline-none', ' flex-1', 'md:text-2xl', 'bg-transparent', 'resize-none'],
+            boxContainerClass: ['items-center', 'duration-200', 'transition-all', 'border-2', 'flex', 'w-full', 'gap-5', 'outline-none', 'px-2 py-2.5', 'focus:outline-none', 'focus:ring-borderMain', 'font-sans', 'bg-[#fff]'],
+            textareaClass: ['pl-2', 'pt-[2px]', 'text-gray-500', 'md:placeholder:leading-8', 'placeholder:leading-8', 'max-h-[190px]', 'duration-200', 'transition-all', 'focus:outline-none', ' flex-1', 'md:text-2xl', 'bg-transparent', 'resize-none'],
             sendClass: ['flex', 'items-center', 'gap-5', 'bg-[#fff]']
         },
         end: {
             button: ['flex', 'dark:bg-offsetDark', 'rounded-l-lg', 'col-start-1', 'row-start-2', '-ml-2'],
-            boxContainerClass: ['border-2', 'duration-200', 'transition-all', 'bg-[#fff]', 'p-4', 'items-center', 'grid', 'grid-rows-1fr-auto', 'grid-cols-3', 'w-full', 'outline-none', 'focus:outline-none', 'gap-5'],
-            textareaClass: ['pl-2', 'text-gray-500', 'col-start-1', 'col-end-4', 'pb-sm', 'overflow-auto', 'outline-none', 'w-full', 'font-sans', 'caret-superDuper', 'resize-none', 'bg-background', 'text-textMain', 'placeholder-textOff', 'max-h-[190px]', 'focus:outline-none', ' flex-1', 'md:text-2xl', 'bg-transparent', 'resize-none'],
+            boxContainerClass: ['border-2', 'duration-200', 'transition-all', 'bg-[#fff]', 'py-6 px-2', 'items-center', 'grid', 'grid-rows-1fr-auto', 'grid-cols-3', 'w-full', 'outline-none', 'focus:outline-none', 'gap-5'],
+            textareaClass: ['pl-2', 'pt-[2px]', 'text-gray-500', 'col-start-1', 'col-end-4', 'pb-sm', 'overflow-auto', 'outline-none', 'w-full', 'font-sans', 'caret-superDuper', 'resize-none', 'bg-background', 'text-textMain', 'placeholder-textOff', 'max-h-[190px]', 'focus:outline-none', ' flex-1', 'md:text-2xl', 'bg-transparent', 'resize-none'],
             sendClass: ['flex', 'bg-[#fff]', 'items-center', 'justify-self-end', 'bg-background', 'rounded-full', 'space-x-2', 'col-start-3', 'row-start-2', '-mr-2']
         }
     }
@@ -40,6 +40,7 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
             e.preventDefault();
             inputSendMessage(inputValue);
             setInputValue('');
+            textareaRef.current!.style.height = 32 + 'px';
         }
     }
     return (
