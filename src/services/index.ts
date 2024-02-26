@@ -1,6 +1,5 @@
 //fetch封装
-
-import { APIBASEURL } from "@constants/base";
+import { APIBASEURL, NODEENV } from "@constants/base";
 
 interface State<T> {
     code: number,
@@ -8,23 +7,30 @@ interface State<T> {
     msg: string
 }
 export const fetchIns = async (url: string, options?: RequestInit): Promise<Response> => {
-    const urls = APIBASEURL + url
-    const res = await fetch(urls, options);
-    return res
+    try {
+        const urls = NODEENV==='test'? url : APIBASEURL + url
+        const res = await fetch(urls, options)
+        if(res.status!==200){
+            throw new Error(res.statusText) 
+        }
+        return res
+    } catch (error) {
+        throw new Error(error as string)
+    }
 }
 
 export const fetchJson = async  <T>(url: string, options?: RequestInit): Promise<State<T>> => {
-    const res = await fetchIns(url, options);
-    const json = await res.json();
-    return json
+    try {
+        const res = await fetchIns(url, options);
+        const json = await res.json();
+        return json
+    } catch (error) {
+        throw new Error(error as string)
+    }
 }
 
 export const GET = <T>(url: string, params: Record<string, string | number> = {}, options: RequestInit = {
     method: 'GET',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    mode: 'cors',
 }): Promise<State<T>> => {
     const UrlQuery = url + '?' + Object.keys(params).map(key => `${key}=${params[key]}`).join('&')
     return fetchJson(UrlQuery, {
@@ -35,11 +41,6 @@ export const GET = <T>(url: string, params: Record<string, string | number> = {}
 
 export const POST = <T>(url: string, params: Record<string, string | number> = {}, options: RequestInit = {
     method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    mode: 'cors',
 }): Promise<State<T>> => {
     return fetchJson(url, {
         ...options,
@@ -50,11 +51,6 @@ export const POST = <T>(url: string, params: Record<string, string | number> = {
 
 export const POSTRESPONSE = (url: string, params: unknown, options: RequestInit = {
     method: 'POST',
-    body: JSON.stringify(params),
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    mode: 'cors',
 }): Promise<Response> => {
     return fetchIns(url, {
         ...options,

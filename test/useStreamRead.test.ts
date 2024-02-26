@@ -15,7 +15,7 @@ describe("useStreamRead", () => {
         const reader = res.body?.getReader()
         const { streamRead } = useStreamRead(reader!)
         await streamRead((str) => {
-            expect(str).not.lengthOf(0)
+            expect(str).not.length(0)
         })
     })
 })

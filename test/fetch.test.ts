@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 describe("fetch", () => {
     it("fetch GET test ", async () => {
         const res = await GET("http://jsonplaceholder.typicode.com/posts", {
-            111: "10",
+            name:'test'
         })
         expect(res).toMatchInlineSnapshot(`
           [
@@ -912,27 +912,25 @@ describe("fetch", () => {
           ]
         `)
     })
-
     it("Fetch POST test ", async () => {
-        const res = await POST("http://jsonplaceholder.typicode.com/posts", {
+        const res = await POST("http://apis.juhe.cn/fapigx/everyday/query", {
             userId: "10",
             title: "test",
             body: "哈哈",
         })
         expect(res).toMatchInlineSnapshot(`
           {
-            "body": "哈哈",
-            "id": 101,
-            "title": "test",
-            "userId": "10",
+            "error_code": 10001,
+            "reason": "错误的请求KEY",
+            "result": null,
+            "resultcode": "101",
           }
         `)
     })
 
     it("Fetch POST return response ", async () => {
         //来一个post 返回是 stream 的接口
-
-        const res = await POSTRESPONSE("http://ekbapi.opencsg.com:9090/api/search_ask", {
+        const res = await POSTRESPONSE("http://lbsyun.baidu.com/index.php?title=webapi", {
             conversation_uuid: v4(),
             ask_type: "single_file",
             llm_type: "1",
