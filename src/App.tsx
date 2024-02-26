@@ -20,6 +20,7 @@ const App = () => {
   const {
     chatHistroyList,
     setChatHistroyList,
+    getLastLoadingAnswer,
     updateChatHistroySourceListByUuid,
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
@@ -30,6 +31,7 @@ const App = () => {
     updateSourceListLast,
     updateLoadingAnswer,
     updateLoadingSourceLast
+  
   } = useChatHistroyStore()
   useFingerprintId().then(async (fingerprintId) => {
     console.log(fingerprintId);
@@ -139,7 +141,7 @@ const App = () => {
             }
           </div>))
         }
-        <InputTextear inputSendMessage={inputSendMessage} />
+        <InputTextear loading={getLastLoadingAnswer()} inputSendMessage={inputSendMessage} />
       </div>
 
     </div>

@@ -4,8 +4,11 @@ import { useRef, useState } from "react";
 
 interface InputTextearProps {
     inputSendMessage: (val: string) => void
+    loading?: boolean
 }
-const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
+const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
+    console.log(loading);
+    
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const classNames = {
         start: {
@@ -62,7 +65,7 @@ const InputTextear = ({ inputSendMessage }: InputTextearProps) => {
                                 inputSendMessage(inputValue)
                                 textareaRef.current!.style.height = 32 + 'px';
                                 setInputValue('')
-                            }} isDisabled={inputValue.length == 0} variant="light" isIconOnly>
+                            }} isDisabled={inputValue.length == 0||loading} variant="light" isIconOnly>
                                 <Icon icon="iconamoon:send-light" width={32} height={32} color="#39474a" />
                             </Button>
                         </div>
