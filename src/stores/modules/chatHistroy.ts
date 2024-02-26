@@ -25,6 +25,7 @@ export const chatHistroyListDefault: chatHistroyType = {
 }
 interface chatHistroyState {
     getLastLoadingAnswer: () => boolean
+    getSomeLoadingAnswer: () => boolean
     chatHistroyList: chatHistroyType[] | []
     setChatHistroyList: (chatHistroyList: chatHistroyType) => void
     updateChatHistroyListLast: (chatHistroyList: chatHistroyType) => void
@@ -54,6 +55,7 @@ const useChatHistroyState = create<chatHistroyState>()(
         persist(
             (set, get) => ({
                 chatHistroyList: [],
+                getSomeLoadingAnswer: () => get().chatHistroyList.some((chatHistroy) => chatHistroy.loadingAnswer),
                 getLastLoadingAnswer: () => get().chatHistroyList[get().chatHistroyList.length - 1].loadingAnswer,
                 getChatHistroyLast: () => get().chatHistroyList[get().chatHistroyList.length - 1],
                 getChatHistroyByUuid: (uuid: string) => get().chatHistroyList.find((chatHistroy) => chatHistroy.uuid === uuid),

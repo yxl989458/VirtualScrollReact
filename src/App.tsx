@@ -20,7 +20,7 @@ const App = () => {
   const {
     chatHistroyList,
     setChatHistroyList,
-    getLastLoadingAnswer,
+    getSomeLoadingAnswer,
     updateChatHistroySourceListByUuid,
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
@@ -141,7 +141,7 @@ const App = () => {
             }
           </div>))
         }
-        <InputTextear loading={getLastLoadingAnswer()} inputSendMessage={inputSendMessage} />
+        <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
       </div>
 
     </div>

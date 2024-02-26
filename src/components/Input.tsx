@@ -1,14 +1,12 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "@nextui-org/react";
-import { useRef, useState } from "react";
+import { memo,useRef, useState } from "react";
 
 interface InputTextearProps {
     inputSendMessage: (val: string) => void
     loading?: boolean
 }
 const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
-    console.log(loading);
-    
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const classNames = {
         start: {
@@ -41,6 +39,7 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
     const textareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
+            if(loading) return
             inputSendMessage(inputValue);
             setInputValue('');
             textareaRef.current!.style.height = 32 + 'px';
@@ -75,4 +74,4 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
         </>
     )
 }
-export default InputTextear
+export default memo(InputTextear,(prevProps,nextProps)=>prevProps.loading===nextProps.loading)
