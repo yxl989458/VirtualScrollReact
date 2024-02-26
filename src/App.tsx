@@ -14,7 +14,9 @@ import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
+import { useFingerprintId } from "@hooks/useFingerprint"
 const App = () => {
+
   const {
     chatHistroyList,
     setChatHistroyList,
@@ -29,7 +31,10 @@ const App = () => {
     updateLoadingAnswer,
     updateLoadingSourceLast
   } = useChatHistroyStore()
-  
+  useFingerprintId().then(async (fingerprintId) => {
+    console.log(fingerprintId);
+    //TODO: 获取用户指纹id 下一步操作待定;
+  })
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
