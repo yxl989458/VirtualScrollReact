@@ -15,6 +15,11 @@ import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import { useFingerprintId } from "@hooks/useFingerprint"
+import HeaderComponent from '@components/Header'
+import { useAppState } from "@stores/modules/app"
+import Sider from "@components/layout/sider/mobile"
+import PCSider from "@components/layout/sider/pc"
+import autoAnimate from '@formkit/auto-animate'
 const App = () => {
 
   const {
@@ -31,8 +36,9 @@ const App = () => {
     updateSourceListLast,
     updateLoadingAnswer,
     updateLoadingSourceLast
-  
+
   } = useChatHistroyStore()
+  const { siderCollapsed, isMobile } = useAppState()
   useFingerprintId().then(async (fingerprintId) => {
     console.log(fingerprintId);
     //TODO: 获取用户指纹id 下一步操作待定;
@@ -122,30 +128,47 @@ const App = () => {
     updateChatHistroySourceListByUuid([], updateUuid)
     await requestQa(getChatHistroyByUuid(updateUuid)!.userMessage, true, updateUuid)
   }
-  return (<>
-    <div ref={containerRef} className="flex justify-center flex-col items-center">
-      <div className="bg-white pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
+  const SiderParent = useRef(null)
+  useEffect(() => {
+    SiderParent.current && autoAnimate(SiderParent.current, {
+      easing: 'linear',
+      disrespectUserMotionPreference: true
+    })
+  }, [SiderParent])
+  console.log(isMobile);
+
+  return (
+    <>
+      {<HeaderComponent />}
+      <div ref={SiderParent}>
         {
-          chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10    border-b-2" key={index}>
-            <UserMessage message={item.userMessage} />
-
-            {
-              item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
-            }
-            <AnswerMessage message={item.AnswerMessage} />
-            <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
-            {/* <AccordionCom /> */}
-            <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
-            {
-              item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
-            }
-          </div>))
+          (siderCollapsed && <Sider />)
         }
-        <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
+        <PCSider />
       </div>
+      <div ref={containerRef} className="flex lg:ml-[300px] justify-center flex-col items-center">
+        <div className="bg-white pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
+          {
+            chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10    border-b-2" key={index}>
+              <UserMessage message={item.userMessage} />
 
-    </div>
-  </>)
+              {
+                item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
+              }
+              <AnswerMessage message={item.AnswerMessage} />
+              <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
+              {/* <AccordionCom /> */}
+              <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
+              {
+                item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
+              }
+            </div>))
+          }
+          <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
+        </div>
+
+      </div>
+    </>)
 }
 
 export default App

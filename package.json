@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ant-design/pro-chat": "^1.9.2",
+    "@formkit/auto-animate": "^0.8.1",
     "@nextui-org/react": "^2.2.9",
     "@types/lodash-es": "^4.17.12",
     "antd": "^5.14.2",

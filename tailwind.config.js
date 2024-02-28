@@ -12,13 +12,13 @@ export default {
         'offset': 'rgba(243 243 238)',
         'secondary': '#1F2937',
         'tertiary': '#374151',
-      }
+      },
+
     },
 
     fontFamily: {
       'display': ["font-display"],
     },
-
   },
   darkMode: "class",
   plugins: [nextui()]
