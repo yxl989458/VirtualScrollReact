@@ -14,11 +14,11 @@ const List = () => {
                 </div>
                 <div className="pl-4 py-1">
                     <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
-                        <p className="text-sm text-[#828282]">宗庆后如何创立娃哈哈</p>
+                        <p className="text-sm truncate text-[#828282]">宗庆后如何创立娃哈哈</p>
+                        <p className="text-sm  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
+                        <p className="text-sm  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
                         <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="truncate text-[#828282] text-sm">介绍下python pickle模块介绍下python pickle模块...</p>
+                        <p className="truncate  text-[#828282] text-sm">介绍下python pickle模块介绍下python pickle模块...</p>
                     </div>
                 </div>
                 <div className="flex gap-3 items-center">
@@ -27,11 +27,11 @@ const List = () => {
                 </div>
                 <div className="pl-4 py-1">
                     <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
-                        <p className="text-sm text-[#828282]">宗庆后如何创立娃哈哈</p>
-                        <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="truncate text-[#828282] text-sm">介绍下python pickle模块介绍下python pickle模块...</p>
+                        <p className="text-sm  truncate text-[#828282]">宗庆后如何创立娃哈哈</p>
+                        <p className="text-sm truncate text-[#828282]">淮海战役伤亡人数是多少</p>
+                        <p className="text-sm  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
+                        <p className="text-sm  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
+                        <p className="truncate  text-[#828282] text-sm">介绍下python pickle模块介绍下python pickle模块...</p>
                     </div>
                 </div>
             </main>

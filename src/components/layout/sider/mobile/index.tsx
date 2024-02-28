@@ -11,7 +11,6 @@ const Sider = () => {
             <aside className=" left-0 top-0 bottom-0 w-[200px] [z-index:100] h-full px-2 py-4 bg-[#f5f5f5] ">
                 <section><List /></section>
             </aside>
-            <Footer/>
         </div>
     )
 }
