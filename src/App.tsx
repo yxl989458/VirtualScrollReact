@@ -38,7 +38,7 @@ const App = () => {
     updateLoadingSourceLast
 
   } = useChatHistroyStore()
-  const { siderCollapsed, isMobile } = useAppState()
+  const { siderCollapsed } = useAppState()
   useFingerprintId().then(async (fingerprintId) => {
     console.log(fingerprintId);
     //TODO: 获取用户指纹id 下一步操作待定;
@@ -135,7 +135,6 @@ const App = () => {
       disrespectUserMotionPreference: true
     })
   }, [SiderParent])
-  console.log(isMobile);
 
   return (
     <>

@@ -1,12 +1,12 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "@nextui-org/react";
-import { memo,useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 
 interface InputTextearProps {
     inputSendMessage: (val: string) => void
     loading?: boolean
 }
-const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
+const InputTextear = ({ inputSendMessage, loading }: InputTextearProps) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const classNames = {
         start: {
@@ -39,7 +39,7 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
     const textareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if(loading) return
+            if (loading) return
             inputSendMessage(inputValue);
             setInputValue('');
             textareaRef.current!.style.height = 32 + 'px';
@@ -47,7 +47,7 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
     }
     return (
         <>
-            <div className="xl:w-[1200px] md:w-[800px] sm:w-[650px]  w-[440px] left-[50%] translate-x-[-50%]   z-10   py-sm px-sm md:px-0 fixed flex justify-center pointer-events-none   gap-xl md:bottom-[64px] bottom-[20px]   bg-transparent">
+            <div className="xl:w-[1200px] md:w-[800px] sm:w-[650px]  w-[440px] lg:left-[55%] left-[50%]  translate-x-[-50%]   z-10   py-sm px-sm md:px-0 fixed flex justify-center pointer-events-none   gap-xl md:bottom-[64px] bottom-[20px]   bg-transparent">
                 <div className="pointer-events-auto   bg-white   duration-200transition-all  min-h-10 w-[80%]   " style={{ borderRadius: inputValue.length < 30 ? '999px' : '20px' }} >
                     <div style={{ borderRadius: inputValue.length < 30 ? '999px' : '20px' }} className={inputValue.length <= 30 ? classNames.start.boxContainerClass.join(' ') : classNames.end.boxContainerClass.join(' ')}>
                         {/* <div className={inputValue.length <= 30 ? classNames.start.button.join(' ') : classNames.end.button.join(' ')}>
@@ -64,7 +64,7 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
                                 inputSendMessage(inputValue)
                                 textareaRef.current!.style.height = 32 + 'px';
                                 setInputValue('')
-                            }} isDisabled={inputValue.length == 0||loading} variant="light" isIconOnly>
+                            }} isDisabled={inputValue.length == 0 || loading} variant="light" isIconOnly>
                                 <Icon icon="iconamoon:send-light" width={32} height={32} color="#39474a" />
                             </Button>
                         </div>
@@ -74,4 +74,4 @@ const InputTextear = ({ inputSendMessage,loading }: InputTextearProps) => {
         </>
     )
 }
-export default memo(InputTextear,(prevProps,nextProps)=>prevProps.loading===nextProps.loading)
+export default memo(InputTextear, (prevProps, nextProps) => prevProps.loading === nextProps.loading)

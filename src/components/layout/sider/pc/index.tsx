@@ -1,7 +1,7 @@
 import Logo from '@/assets/logo.svg'
 import { Icon } from "@iconify/react/dist/iconify.js"
-import List from './List'
-import Footer from './Footer'
+import List from '../components/List'
+import Footer from '../components/Footer'
 
 const PCSider = () => {
     return (
