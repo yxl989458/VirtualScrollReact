@@ -14,12 +14,12 @@ const SourceList = ({ sourceList }: SourceListProps) => {
         setCacheSourceList([...cacheSourceList, ...cloneDeep(sourceList).slice(cacheSourceList.length, cacheSourceList.length + 3)])
     }
     return (
-        <div className="grid md:grid-cols-4  gap-3  grid-cols-2">
+        <div className="grid lg:grid-cols-1  gap-3  grid-cols-2">
             {
                 cacheSourceList.map((source, index) => (<SourceCard source={source} key={index} />))
             }
             {
-                sourceList.length > 4 && !isShowMore && <SourceMore moreSourceList={sourceList.slice(3, sourceList.length)}  clickSourceMore={clickSourceMore} />
+                sourceList.length > 4 && !isShowMore && <SourceMore moreSourceList={sourceList.slice(3, sourceList.length)} clickSourceMore={clickSourceMore} />
             }
         </div>
     )
