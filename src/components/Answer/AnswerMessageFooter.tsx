@@ -28,7 +28,7 @@ const AnswerMessageFooter = ({ chatHistroy, reloadChat }: AnswerMessageFooter) =
         }, 800)
     }
     return (
-        <div className="flex items-center justify-between mt-5">
+        <div className="flex items-center justify-between">
             <div className="flex md:gap-5  items-center ">
                 {/* <Tooltip content="Copy Link" className="text-xl font-bold">
                     <Button className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon icon="material-symbols:share-outline" width={24} height={24} />}>

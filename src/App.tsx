@@ -149,17 +149,19 @@ const App = () => {
         <div className="bg-white pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
           {
             chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
-              <div className="col-span-2">
-                <UserMessage message={item.userMessage} />
-                {
-                  item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
-                }
-                <AnswerMessage message={item.AnswerMessage} />
+              <div className="col-span-2 flex flex-col justify-between">
+                <div>
+                  <UserMessage message={item.userMessage} />
+                  {
+                    item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
+                  }
+                  <AnswerMessage message={item.AnswerMessage} />
+                </div>
                 <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
               </div>
               {/* <AccordionCom /> */}
               <div className="col-span-1">
-                <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用"/>
+                <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
                 {
                   item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
                 }
