@@ -45,9 +45,6 @@ interface chatHistroyState {
     updateChatHistroyAnswerMessageByUuid: (AnswerMessage: string, uuid: string) => void
     updateChatHistroyLoadingAnswerByUuid: (LoadingAnswer: boolean, uuid: string) => void
     updateChatHistroyLoadingSourceByUuid: (LoadingSource: boolean, uuid: string) => void
-    updateChatHistroyOriginalAnswerMessageByUuid:(originalAnswerMessage: string, uuid: string) => void,
-    updateChatHistroyOriginalAnswerMessageLast:(originalAnswerMessage: string) => void
-    
 }
 
 const useChatHistroyState = create<chatHistroyState>()(
@@ -79,20 +76,6 @@ const useChatHistroyState = create<chatHistroyState>()(
                         chatHistroyList: state.chatHistroyList
                     }
                 }),
-                updateChatHistroyOriginalAnswerMessageByUuid: (originalAnswerMessageByUuid: string, uuid: string) => set((state) => {
-                    const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
-                    state.chatHistroyList[index].originalAnswerMessage = originalAnswerMessageByUuid
-                    return {
-                        chatHistroyList: state.chatHistroyList
-                    }
-                }),
-                updateChatHistroyOriginalAnswerMessageLast: (originalAnswerMessage: string) => set((state) => {
-                    const index = state.chatHistroyList.length - 1
-                    state.chatHistroyList[index].originalAnswerMessage = originalAnswerMessage
-                    return {
-                        chatHistroyList: state.chatHistroyList
-                    }
-                }),
                 updateChatHistroyAnswerMessageByUuid: (AnswerMessage: string, uuid: string) => set((state) => {
                     const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
                     state.chatHistroyList[index].AnswerMessage = AnswerMessage
@@ -109,7 +92,7 @@ const useChatHistroyState = create<chatHistroyState>()(
                 }),
                 updateChatHistroyLoadingSourceByUuid: (LoadingSource: boolean, uuid: string) => set((state) => {
                     const index = state.chatHistroyList.findIndex((chatHistroy) => chatHistroy.uuid === uuid)
-                    state.chatHistroyList[index].loadingSource =LoadingSource
+                    state.chatHistroyList[index].loadingSource = LoadingSource
                     return {
                         chatHistroyList: state.chatHistroyList
                     }

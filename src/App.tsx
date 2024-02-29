@@ -30,8 +30,6 @@ const App = () => {
     updateChatHistroyAnswerMessageByUuid,
     updateChatHistroyLoadingAnswerByUuid,
     updateChatHistroyLoadingSourceByUuid,
-    updateChatHistroyOriginalAnswerMessageByUuid,
-    updateChatHistroyOriginalAnswerMessageLast,
     getChatHistroyByUuid, updateAnswerMessageLast,
     updateSourceListLast,
     updateLoadingAnswer,
@@ -54,11 +52,9 @@ const App = () => {
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
         if (isReload && reloadUuid) {
-          updateChatHistroyOriginalAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
           return updateChatHistroyAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
         }
         updateAnswerMessageLast(AnswerMessageFormat)
-        updateChatHistroyOriginalAnswerMessageLast(output)
       }, (isDone: boolean) => {
         if (isDone) {
           if (isReload && reloadUuid) {
