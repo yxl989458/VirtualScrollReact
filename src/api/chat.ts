@@ -4,7 +4,6 @@ import { POST, POSTRESPONSE } from "@services/index"
 
 
 interface chatQaRequest {
-    fp: string | null,
     conversation_uuid: string,
     ask_type: string,
     llm_type: string,

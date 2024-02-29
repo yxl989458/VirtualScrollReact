@@ -14,7 +14,6 @@ import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
-import { useFingerprintId } from "@hooks/useFingerprint"
 import autoAnimate from '@formkit/auto-animate'
 const App = () => {
 
@@ -37,9 +36,8 @@ const App = () => {
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
-    const visitorId = await useFingerprintId()
     try {
-      const reader = await chatQaRequestWithReader({ fp: visitorId, conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
       getSourceListByUuid(reloadUuid || uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
@@ -60,6 +58,7 @@ const App = () => {
         }
       })
     } catch (error) {
+      console.error(error);
       updateLoadingAnswer(false)
       updateLoadingSourceLast(false)
       updateSourceListLast([])

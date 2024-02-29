@@ -1,6 +1,6 @@
 //fetch封装
 import { APIBASEURL, NODEENV } from "@constants/base";
-
+import { useFingerprintId } from "@hooks/useFingerprint";
 interface State<T> {
     code: number,
     data: T,
@@ -8,13 +8,23 @@ interface State<T> {
 }
 export const fetchIns = async (url: string, options?: RequestInit): Promise<Response> => {
     try {
-        const urls = NODEENV==='test'? url : APIBASEURL + url
-        const res = await fetch(urls, options)
-        if(res.status!==200){
-            throw new Error(res.statusText) 
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const fingerprintId = await useFingerprintId()
+        const urls = NODEENV === 'test' ? url : APIBASEURL + url
+        
+        const res = await fetch(urls, {
+            ...options,
+            headers: {
+                'authorization': JSON.parse(localStorage.getItem('auth')!)!.state.token,
+                'fp': fingerprintId
+            }
+        })
+        if (res.status !== 200) {
+            throw new Error(res.statusText)
         }
         return res
     } catch (error) {
+        console.log(error)
         throw new Error(error as string)
     }
 }
@@ -39,7 +49,8 @@ export const GET = <T>(url: string, params: Record<string, string | number> = {}
     })
 }
 
-export const POST = <T>(url: string, params: Record<string, string | number> = {}, options: RequestInit = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const POST = <T>(url: string, params: Record<string, any> = {}, options: RequestInit = {
     method: 'POST',
 }): Promise<State<T>> => {
     return fetchJson(url, {
