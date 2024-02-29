@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import AnswerMessage from "./components/Answer/AnswerMessage"
-import SourceList from "./components/Source/SourceList"
-import TitleBlock from "./components/TitleBlock"
-import UserMessage from "./components/UserMessage"
-import { useEffect, useRef, useState } from "react"
+import AnswerMessage from "../../components/Answer/AnswerMessage"
+import SourceList from "../../components/Source/SourceList"
+import TitleBlock from "../../components/TitleBlock"
+import UserMessage from "../../components/UserMessage"
+import { memo, useEffect, useRef, useState } from "react"
 import 'highlight.js/styles/atom-one-light.css'
 import AnswerMessageFooter from "@components/Answer/AnswerMessageFooter"
 import InputTextear from "@components/Input"
@@ -15,10 +15,6 @@ import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import { useFingerprintId } from "@hooks/useFingerprint"
-import HeaderComponent from '@components/Header'
-import { useAppState } from "@stores/modules/app"
-import Sider from "@components/layout/sider/mobile"
-import PCSider from "@components/layout/sider/pc"
 import autoAnimate from '@formkit/auto-animate'
 const App = () => {
 
@@ -34,19 +30,16 @@ const App = () => {
     updateSourceListLast,
     updateLoadingAnswer,
     updateLoadingSourceLast
-
   } = useChatHistroyStore()
-  const { siderCollapsed } = useAppState()
-  useFingerprintId().then(async (fingerprintId) => {
-    console.log(fingerprintId);
-    //TODO: 获取用户指纹id 下一步操作待定;
-  })
+
+
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
+    const visitorId = await useFingerprintId()
     try {
-      const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      const reader = await chatQaRequestWithReader({ fp: visitorId, conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
       getSourceListByUuid(reloadUuid || uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
@@ -134,41 +127,29 @@ const App = () => {
 
   return (
     <>
-      {<HeaderComponent />}
-      <div ref={SiderParent}>
-        {
-          (siderCollapsed && <Sider />)
-        }
-        <PCSider />
-      </div>
-      <div ref={containerRef} className="flex lg:ml-[300px] justify-center flex-col items-center">
-        <div className="bg-white pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
-          {
-            chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
-              <div className="col-span-2 flex flex-col justify-between">
-                <div>
-                  <UserMessage message={item.userMessage} />
-                  {
-                    item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
-                  }
-                  <AnswerMessage message={item.AnswerMessage} />
-                </div>
-                <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
-              </div>
-              {/* <AccordionCom /> */}
-              <div className="col-span-1">
-                <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
-                {
-                  item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
-                }
-              </div>
-            </div>))
-          }
-          <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
-        </div>
-
-      </div>
+      {
+        chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
+          <div className="col-span-2 flex flex-col justify-between">
+            <div>
+              <UserMessage message={item.userMessage} />
+              {
+                item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
+              }
+              <AnswerMessage message={item.AnswerMessage} />
+            </div>
+            <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
+          </div>
+          {/* <AccordionCom /> */}
+          <div className="col-span-1">
+            <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
+            {
+              item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
+            }
+          </div>
+        </div>))
+      }
+      <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
     </>)
 }
 
-export default App
+export default memo(App)

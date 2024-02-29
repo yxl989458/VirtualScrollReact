@@ -9,6 +9,15 @@ export default defineConfig(() => {
     server: {
       open: true,
       host: '0.0.0.0',
+      proxy: {
+        '/api': {
+          target: 'http://192.168.1.226:8000',
+          changeOrigin: true,
+          rewrite(path) {
+            return path.replace(/^\/api/, '/api')
+          },
+        }
+      }
     },
     resolve: {
       alias: {
@@ -20,7 +29,9 @@ export default defineConfig(() => {
         '@hooks': join(__dirname, 'src/hooks/'),
         "@services": join(__dirname, 'src/services/'),
         "@api": join(__dirname, 'src/api/'),
-        "@utils": join(__dirname, 'src/utils/')
+        "@utils": join(__dirname, 'src/utils/'),
+        "@router": join(__dirname, 'src/router/'),
+        "@views": join(__dirname, 'src/views/'),
       }
     },
     build: {
