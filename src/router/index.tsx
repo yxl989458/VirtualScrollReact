@@ -27,12 +27,12 @@ const Router = () => {
                     <Route path='/loginTripartite' element={<LoginTripartite />}></Route>
                     <Route path='/' element={<Content />}>
                         <Route index element={<Home />}></Route>
+                        <Route path='/search/:id' element={<Home />}></Route>
                         {/* <Route path='/user' element={<User />}></Route> */}
                     </Route>
                 </Routes>
             </BrowserRouter>
         )
-        // eslint-disable-next-line react-hooks/rules-of-hooks
     } else {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         useOpenlogin()

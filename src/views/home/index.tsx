@@ -12,11 +12,13 @@ import useChatHistroyStore, { chatHistroyListDefault } from "@stores/modules/cha
 import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
-import { chatQaRequestWithReader, getChatSource } from "@api/chat"
+import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import autoAnimate from '@formkit/auto-animate'
+import { generateRandomString } from "@utils/randomStr"
+import { useNavigate, useParams } from "react-router-dom"
 const App = () => {
-
+  const { id } = useParams()
   const {
     chatHistroyList,
     setChatHistroyList,
@@ -30,15 +32,15 @@ const App = () => {
     updateLoadingAnswer,
     updateLoadingSourceLast
   } = useChatHistroyStore()
-
-
+  const navigate = useNavigate()
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
-  async function requestQa(inputVal: string, isReload: boolean = false, reloadUuid?: string) {
+  async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, reloadUuid?: string,) {
     try {
-      const reader = await chatQaRequestWithReader({ conversation_uuid: uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
-      getSourceListByUuid(reloadUuid || uuid, isReload)
+
+      const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      getSourceListByUuid(conversation_uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
@@ -72,8 +74,16 @@ const App = () => {
       inline: "nearest"
     });
   }, [containerRef.current])
-
   const inputSendMessage = async (val: string) => {
+    let ids = generateRandomString()
+    if (id) {
+      ids = id
+    }
+    navigate(`/search/${ids}`)
+    const { data: { gen_successed } } = await getChatRecord(ids, val)
+    if (gen_successed) {
+      return
+    }
     await setChatHistroyList({
       ...chatHistroyListDefault,
       uuid,
@@ -81,7 +91,7 @@ const App = () => {
     })
     updateLoadingSourceLast(true)
     updateLoadingAnswer(true)
-    requestQa(val)
+    requestQa(val, false, ids)
     document.body.scrollIntoView({
       behavior: "smooth",
       block: "end",
@@ -123,6 +133,8 @@ const App = () => {
       disrespectUserMotionPreference: true
     })
   }, [SiderParent])
+
+
 
   return (
     <>
