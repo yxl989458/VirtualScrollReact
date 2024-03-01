@@ -8,63 +8,44 @@ import 'highlight.js/styles/atom-one-light.css'
 import AnswerMessageFooter from "@components/Answer/AnswerMessageFooter"
 import InputTextear from "@components/Input"
 import { v4 as uuidV4 } from "uuid"
-import useChatHistroyStore, { chatHistroyListDefault } from "@stores/modules/chatHistroy"
+import { chatHistroyType, generateChatHistroyDefault } from "@stores/modules/chatHistroy"
 import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
-import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
-import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
+import { chatQaRequestWithReader, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import autoAnimate from '@formkit/auto-animate'
 import { generateRandomString } from "@utils/randomStr"
 import { useNavigate, useParams } from "react-router-dom"
 const App = () => {
-  const { id } = useParams()
-  const {
-    chatHistroyList,
-    setChatHistroyList,
-    getSomeLoadingAnswer,
-    updateChatHistroySourceListByUuid,
-    updateChatHistroyAnswerMessageByUuid,
-    updateChatHistroyLoadingAnswerByUuid,
-    updateChatHistroyLoadingSourceByUuid,
-    getChatHistroyByUuid, updateAnswerMessageLast,
-    updateSourceListLast,
-    updateLoadingAnswer,
-    updateLoadingSourceLast
-  } = useChatHistroyStore()
+  const { id: routerId } = useParams()
+  const [chatHistroy, setChatHistroy] = useState<chatHistroyType[]>([])
   const navigate = useNavigate()
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
-  const [uuid, setUuid] = useState(uuidV4())
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, reloadUuid?: string,) {
     try {
-
       const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
       getSourceListByUuid(conversation_uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
         const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
         if (isReload && reloadUuid) {
-          return updateChatHistroyAnswerMessageByUuid(AnswerMessageFormat, reloadUuid)
+          updateChatHistroyFieldsByUuid(reloadUuid, 'AnswerMessage', AnswerMessageFormat)
+          return
         }
-        updateAnswerMessageLast(AnswerMessageFormat)
+        updateChatHistroyLast('AnswerMessage', AnswerMessageFormat)
       }, (isDone: boolean) => {
         if (isDone) {
           if (isReload && reloadUuid) {
-            updateChatHistroyLoadingAnswerByUuid(false, reloadUuid)
+            updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
           }
-          setUuid(uuidV4())
-          updateLoadingAnswer(false)
+          updateChatHistroyLast('loadingAnswer', false)
           setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
           return
         }
       })
     } catch (error) {
-      console.error(error);
-      updateLoadingAnswer(false)
-      updateLoadingSourceLast(false)
-      updateSourceListLast([])
-      updateAnswerMessageLast(RESPONSEERRORMESSAGE[500])
+      throw new Error(error as string)
     }
   }
   useEffect(() => {
@@ -75,23 +56,12 @@ const App = () => {
     });
   }, [containerRef.current])
   const inputSendMessage = async (val: string) => {
-    let ids = generateRandomString()
-    if (id) {
-      ids = id
-    }
-    navigate(`/search/${ids}`)
-    const { data: { gen_successed } } = await getChatRecord(ids, val)
-    if (gen_successed) {
-      return
-    }
-    await setChatHistroyList({
-      ...chatHistroyListDefault,
-      uuid,
-      userMessage: val
-    })
-    updateLoadingSourceLast(true)
-    updateLoadingAnswer(true)
-    requestQa(val, false, ids)
+    const conversationUuid = routerId || generateRandomString()
+    //TODO: 根据conversationUuid 请求接口getChatRecord 判断是否有历史记录 如果有进行下一步操作 未知 需讨论
+    navigate(`/search/${conversationUuid}`)
+    // const { data: { gen_successed } } = await getChatRecord(conversationUuid, val)
+    setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid }])
+    requestQa(val, false, conversationUuid)
     document.body.scrollIntoView({
       behavior: "smooth",
       block: "end",
@@ -103,28 +73,26 @@ const App = () => {
       const { data } = await getChatSource(uuidP)
       if (data === null) getSourceListByUuid(uuidP)
       else {
-        updateLoadingSourceLast(false)
         if (isReload) {
-          updateChatHistroyLoadingSourceByUuid(false, uuidP)
-          updateChatHistroySourceListByUuid(data.map((item) => ({ ...item, id: uuidV4() })), uuidP)
-          setUuid(uuidV4())
+          updateChatHistroyFieldsByConversationUuid(uuidP, 'loadingSource', false)
+          updateChatHistroyFieldsByConversationUuid(uuidP, 'sourceList', data.map((item) => ({ ...item, id: uuidV4() })))
           return
         }
-        updateSourceListLast(data.map((item) => ({ ...item, id: uuidV4() })))
-        setUuid(uuidV4())
+        updateChatHistroyLast('loadingSource', false)
+        updateChatHistroyLast('sourceList', data.map((item) => ({ ...item, id: uuidV4() })))
       }
     } catch (error) {
-      updateLoadingSourceLast(false)
-      updateSourceListLast([])
-      return
+      throw new Error(error as string)
+
     }
   }
   const reloadChat = async (updateUuid: string) => {
-    updateChatHistroyAnswerMessageByUuid("", updateUuid)
-    updateChatHistroyLoadingAnswerByUuid(true, updateUuid)
-    updateChatHistroyLoadingSourceByUuid(true, updateUuid)
-    updateChatHistroySourceListByUuid([], updateUuid)
-    await requestQa(getChatHistroyByUuid(updateUuid)!.userMessage, true, updateUuid)
+    updateChatHistroyFieldsByUuid(updateUuid, 'AnswerMessage', '')
+    updateChatHistroyFieldsByUuid(updateUuid, 'loadingAnswer', true)
+    updateChatHistroyFieldsByUuid(updateUuid, 'loadingSource', true)
+    updateChatHistroyFieldsByUuid(updateUuid, 'sourceList', [])
+    const chatHistroyRes = chatHistroy.find((item) => item.uuid === updateUuid)
+    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, updateUuid)
   }
   const SiderParent = useRef(null)
   useEffect(() => {
@@ -133,13 +101,31 @@ const App = () => {
       disrespectUserMotionPreference: true
     })
   }, [SiderParent])
-
-
+  const updateChatHistroyFieldsByUuid = <T extends keyof chatHistroyType>(id: string, fields: T, value: chatHistroyType[T]) => {
+    setChatHistroy(chatHistroyList => {
+      const index = chatHistroyList.findIndex((item) => item['uuid'] === id)
+      chatHistroyList[index][fields] = value
+      return [...chatHistroyList]
+    })
+  }
+  const updateChatHistroyFieldsByConversationUuid = <T extends keyof chatHistroyType>(id: string, fields: T, value: chatHistroyType[T]) => {
+    setChatHistroy(chatHistroyList => {
+      const index = chatHistroyList.findIndex((item) => item['conversationUuid'] === id)
+      chatHistroyList[index][fields] = value
+      return [...chatHistroyList]
+    })
+  }
+  const updateChatHistroyLast = <T extends keyof chatHistroyType>(fields: T, value: chatHistroyType[T]) => {
+    setChatHistroy(chatHistroyList => {
+      chatHistroyList[chatHistroyList.length - 1][fields] = value
+      return [...chatHistroyList]
+    })
+  }
 
   return (
     <>
       {
-        chatHistroyList.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
+        chatHistroy.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
           <div className="col-span-2 flex flex-col justify-between">
             <div>
               <UserMessage message={item.userMessage} />
@@ -159,7 +145,7 @@ const App = () => {
           </div>
         </div>))
       }
-      <InputTextear loading={getSomeLoadingAnswer()} inputSendMessage={inputSendMessage} />
+      <InputTextear loading={false} inputSendMessage={inputSendMessage} />
     </>)
 }
 

@@ -8,20 +8,24 @@ export type chatHistroyType = {
     sourceList: Source[]
     AnswerMessage: string
     uuid: string,
+    conversationUuid:string
     userMessage: string
     loadingAnswer: boolean
     loadingSource: boolean
     originalAnswerMessage: string
 
 }
-export const chatHistroyListDefault: chatHistroyType = {
-    sourceList: [],
-    uuid: v4(),
-    userMessage: '',
-    AnswerMessage: '',
-    loadingAnswer: true,
-    loadingSource: true,
-    originalAnswerMessage: ''
+export const generateChatHistroyDefault = () =>{
+    const uuid = v4()
+   return {
+        sourceList: [],
+        uuid: uuid,
+        userMessage: '',
+        AnswerMessage: '',
+        loadingAnswer: true,
+        loadingSource: true,
+        originalAnswerMessage: ''
+    }
 }
 interface chatHistroyState {
     getLastLoadingAnswer: () => boolean

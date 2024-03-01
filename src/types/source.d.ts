@@ -6,4 +6,3 @@ export type Source = {
     snippet: string
     id: string
 }
-
