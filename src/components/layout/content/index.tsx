@@ -1,13 +1,25 @@
 import autoAnimate from "@formkit/auto-animate"
 import { useAppState } from "@stores/modules/app"
-import { useEffect, useRef } from "react"
-import { Outlet } from "react-router-dom"
+import { useEffect, useRef, useState } from "react"
+import { Outlet, useParams } from "react-router-dom"
 import { SiderMobile, SiderPC } from ".."
 import Header from "@components/Header"
+import { getUserSearchRecords } from "@api/chat"
+import { UserSearchRecords } from "@/types/Apichat"
 
 
 
 const Content = () => {
+    const { id: searchId } = useParams()
+    const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
+    useEffect(() => {
+        getUserSearchRecordsRequest()
+    }, [searchId])
+    const getUserSearchRecordsRequest = async () => {
+        const { data } = await getUserSearchRecords()
+        setUserSearchRecords(data.splice(0, 5))
+    }
+
     const { siderCollapsed } = useAppState()
     const SiderParent = useRef(null)
     useEffect(() => {
@@ -23,9 +35,9 @@ const Content = () => {
                 <Header />
                 <div ref={SiderParent} >
                     {
-                        (siderCollapsed && <SiderMobile />)
+                        (siderCollapsed && <SiderMobile userSearchRecords={userSearchRecords} />)
                     }
-                    <SiderPC />
+                    <SiderPC  userSearchRecords={userSearchRecords} />
                 </div>
                 <Outlet></Outlet>
             </div >

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Source } from "../../types/source"
 import SourceCard from "./SourceCard"
 import SourceMore from "./SourceMore"
@@ -7,16 +7,20 @@ type SourceListProps = {
     sourceList: Source[]
 }
 const SourceList = ({ sourceList }: SourceListProps) => {
-    const [cacheSourceList, setCacheSourceList] = useState(cloneDeep(sourceList).slice(0, 3))
+    const [cacheSourceList, setCacheSourceList] = useState<Source[]>([])
     const [isShowMore, setIsShowMore] = useState(false)
     const clickSourceMore = () => {
         setIsShowMore(true)
-        setCacheSourceList([...cacheSourceList, ...cloneDeep(sourceList).slice(cacheSourceList.length, cacheSourceList.length + 3)])
+        setCacheSourceList(sourceList)
     }
+    useEffect(() => {
+        setIsShowMore(false)
+        setCacheSourceList(sourceList.slice(0, 3))
+    }, [sourceList])
     return (
         <div className="grid lg:grid-cols-1  gap-3  grid-cols-2">
             {
-                cacheSourceList.map((source, index) => (<SourceCard source={source} key={index} />))
+                cloneDeep(cacheSourceList).map(source => (<SourceCard key={source.id} source={source} />))
             }
             {
                 sourceList.length > 4 && !isShowMore && <SourceMore moreSourceList={sourceList.slice(3, sourceList.length)} clickSourceMore={clickSourceMore} />

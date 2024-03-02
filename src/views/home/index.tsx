@@ -11,13 +11,16 @@ import { v4 as uuidV4 } from "uuid"
 import { chatHistroyType, generateChatHistroyDefault } from "@stores/modules/chatHistroy"
 import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
-import { chatQaRequestWithReader, getChatSource } from "@api/chat"
+import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import autoAnimate from '@formkit/auto-animate'
 import { generateRandomString } from "@utils/randomStr"
 import { useNavigate, useParams } from "react-router-dom"
+
 const App = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: routerId } = useParams()
+
   const [chatHistroy, setChatHistroy] = useState<chatHistroyType[]>([])
   const navigate = useNavigate()
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
@@ -48,20 +51,15 @@ const App = () => {
       throw new Error(error as string)
     }
   }
-  useEffect(() => {
-    document.body.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "nearest"
-    });
-  }, [containerRef.current])
+
   const inputSendMessage = async (val: string) => {
-    const conversationUuid = routerId || generateRandomString()
+    const randomStr = generateRandomString()
     //TODO: 根据conversationUuid 请求接口getChatRecord 判断是否有历史记录 如果有进行下一步操作 未知 需讨论
-    navigate(`/search/${conversationUuid}`)
-    // const { data: { gen_successed } } = await getChatRecord(conversationUuid, val)
-    setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid }])
-    requestQa(val, false, conversationUuid)
+    const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
+    if (gen_successed) return
+    navigate(`/search/${randomStr}`)
+    setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
+    requestQa(val, false, randomStr)
     document.body.scrollIntoView({
       behavior: "smooth",
       block: "end",
@@ -121,7 +119,28 @@ const App = () => {
       return [...chatHistroyList]
     })
   }
-
+  useEffect(() => {
+    document.body.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "nearest"
+    });
+  }, [containerRef.current])
+  useEffect(() => {
+    if (!routerId) {
+      setChatHistroy([])
+      return
+    }
+    routerId && getChatRecordRequest(routerId)
+  }, [routerId])
+  async function getChatRecordRequest(uuid: string) {
+    const { data } = await getChatRecord(uuid)
+    if (!data.gen_successed) return
+    const defaultChat = generateChatHistroyDefault()
+    const sourceList = data.ref_links.map((item) => ({ ...item, id: uuidV4() }))
+    const insert: Array<chatHistroyType>= [{ ...defaultChat, loadingAnswer: false, loadingSource: false, conversationUuid: data.uuid, AnswerMessage: data.gen_text, userMessage: data.prompt, sourceList }]
+    setChatHistroy(insert)
+  }
   return (
     <>
       {
@@ -145,7 +164,8 @@ const App = () => {
           </div>
         </div>))
       }
-      <InputTextear loading={false} inputSendMessage={inputSendMessage} />
+      {!routerId && <InputTextear loading={false} inputSendMessage={inputSendMessage} />}
+
     </>)
 }
 

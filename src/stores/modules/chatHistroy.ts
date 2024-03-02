@@ -15,13 +15,14 @@ export type chatHistroyType = {
     originalAnswerMessage: string
 
 }
-export const generateChatHistroyDefault = () =>{
+export const generateChatHistroyDefault = ():chatHistroyType =>{
     const uuid = v4()
    return {
         sourceList: [],
         uuid: uuid,
         userMessage: '',
         AnswerMessage: '',
+        conversationUuid: '',
         loadingAnswer: true,
         loadingSource: true,
         originalAnswerMessage: ''

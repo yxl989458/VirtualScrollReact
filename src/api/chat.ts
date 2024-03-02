@@ -1,7 +1,7 @@
 import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import type { Source } from "@/types/source"
 import { POST, POSTRESPONSE } from "@services/index"
-import { UserSearchRecords, searchRecord } from "@/types/Apichat"
+import { UserSearchRecords } from "@/types/Apichat"
 
 
 interface chatQaRequest {
@@ -24,7 +24,7 @@ export const getChatSource = (conversation_uuid: string) => POST<Source[]>("/sea
 
 
 //search_record 获取聊天记录
-export const getChatRecord = (conversation_uuid: string, question: string) => POST<searchRecord>("/search_record", { conversation_uuid, question })
+export const getChatRecord = (conversation_uuid: string, question?: string) => POST<UserSearchRecords>("/search_record", { conversation_uuid, question })
 
 //user_search_records
 export const getUserSearchRecords = () => POST<UserSearchRecords[]>("/user_search_records")

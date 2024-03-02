@@ -1,21 +1,18 @@
-import { getUserSearchRecords } from "@api/chat"
 import { Icon } from "@iconify/react/dist/iconify.js"
 import { UserSearchRecords } from "@/types/Apichat"
-import { useEffect, useState } from "react"
-
-const List = () => {
-    const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
-    useEffect(() => {
-        getUserSearchRecordsRequest()
-    }, [])
-    const getUserSearchRecordsRequest = async () => {
-        const { data } = await getUserSearchRecords()
-        setUserSearchRecords(data.splice(0, 5))
+import { useNavigate } from "react-router-dom"
+interface listProprs {
+    userSearchRecords: UserSearchRecords[]
+}
+const List = ({ userSearchRecords }: listProprs) => {
+    const navigate = useNavigate()
+    function searchRecord(item: UserSearchRecords) {
+        navigate(`/search/${item.uuid}`)
     }
     return (
         <>
             <main className="flex gap-5 flex-col">
-                <div className="flex gap-3 items-center cursor-pointer">
+                <div className="flex gap-3 items-center cursor-pointer" onClick={() => navigate('/')}>
                     <Icon icon="mdi:home" width={30} height={30} color="#828282" />
                     <span className="text-[#828282] font-bold">首页</span>
                 </div>
@@ -39,7 +36,7 @@ const List = () => {
                 <div className="pl-4 py-1">
                     <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
                         {
-                            userSearchRecords.map(item => <p key={item.uuid} className="text-sm cursor-pointer  truncate text-[#828282]" >{item.prompt}</p>)
+                            userSearchRecords.map(item => <p onClick={() => searchRecord(item)} key={item.uuid} className="text-sm cursor-pointer  truncate text-[#828282]" >{item.prompt}</p>)
                         }
                     </div>
                 </div>

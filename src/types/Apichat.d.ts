@@ -1,18 +1,3 @@
-export interface searchRecord {
-    uuid: string;
-    user: string;
-    prompt: string;
-    ref_links: string;
-    search_ret_raw_text: string;
-    ref_text: string;
-    gen_text: string;
-    generate_time: number;
-    token_count: number;
-    gen_successed: boolean;
-    created_at: string;
-    updated_at: string;
-}
-
 
 export interface UserSearchRecords {
     uuid: string;
