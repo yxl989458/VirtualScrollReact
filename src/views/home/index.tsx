@@ -30,7 +30,7 @@ const App = () => {
       getSourceListByUuid(conversation_uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
-        const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output)
+        const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output, chatHistroy[chatHistroy.length - 1].sourceList)
         if (isReload && reloadUuid) {
           updateChatHistroyFieldsByUuid(reloadUuid, 'AnswerMessage', AnswerMessageFormat)
           return
@@ -56,7 +56,7 @@ const App = () => {
     const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
     if (gen_successed) return
     setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
-    requestQa(val, false, randomStr, randomStr,true)
+    requestQa(val, false, randomStr, randomStr, true)
   }
   const getSourceListByUuid = async (uuidP: string, isReload: boolean = false) => {
     try {
@@ -82,7 +82,7 @@ const App = () => {
     updateChatHistroyFieldsByUuid(updateUuid, 'loadingSource', true)
     updateChatHistroyFieldsByUuid(updateUuid, 'sourceList', [])
     const chatHistroyRes = chatHistroy.find((item) => item.uuid === updateUuid)
-    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, routerId!,false, updateUuid)
+    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, routerId!, false, updateUuid)
   }
   const SiderParent = useRef(null)
   useEffect(() => {
@@ -130,7 +130,7 @@ const App = () => {
     if (!data.gen_successed) return
     const defaultChat = generateChatHistroyDefault()
     const sourceList = data.ref_links.map((item) => ({ ...item, id: uuidV4() }))
-    const AnswerMessageFormatMarkdown = (await PropertyRemoteMarkdown).mdRender(data.gen_text)
+    const AnswerMessageFormatMarkdown = (await PropertyRemoteMarkdown).mdRender(data.gen_text, sourceList)
     const insert: Array<chatHistroyType> = [{ ...defaultChat, loadingAnswer: false, loadingSource: false, conversationUuid: data.uuid, AnswerMessage: AnswerMessageFormatMarkdown, userMessage: data.prompt, sourceList }]
     setChatHistroy(insert)
     setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())

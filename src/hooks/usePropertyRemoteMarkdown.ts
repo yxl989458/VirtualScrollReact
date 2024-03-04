@@ -1,5 +1,6 @@
 import { createMarkdownRenderer } from '@modules/markdown'
-export async function usePropertyRemoteMarkdown(): Promise<{ mdRender: (content: string) => string }> {
+import { Source } from '@/types/source'
+export async function usePropertyRemoteMarkdown(): Promise<{ mdRender: (content: string, soureList: Source[]) => string }> {
   const mdRender = await createMarkdownRenderer()
   return {
     mdRender

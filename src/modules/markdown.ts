@@ -5,16 +5,16 @@ import {
   tsConfigSite,
   tsConfigSiteRef
 } from '@constants'
+import { Source } from '@/types/source';
 import { HLJSPlugin } from 'highlight.js';
 
 export async function createMarkdownRenderer() {
 
   const [
-    { default: markdownIt }, { default: hljs }, { default: javascript }, { default: json }, { default: markdownTable }, { default: copyButtonPlugin },
+    { default: markdownIt }, { default: hljs }, { default: javascript }, { default: json }, { default: markdownTable }, { default: copyButtonPlugin }, { default: mila },
     { default: c }, { default: php }, { default: typescript }, { default: markdown }, { default: css }, { default: python }, { default: shell },
     { default: yaml }, { default: dockerfile }, { default: ini }, { default: properties }, { default: xml }, { default: ruby }, { default: go },
     { default: csharp }, { default: cpp }, { default: rust },
-
   ] =
     await Promise.all([
       import(/* webpackChunkName: 'markdown-it' */ 'markdown-it'),
@@ -23,6 +23,7 @@ export async function createMarkdownRenderer() {
       import('highlight.js/lib/languages/json'),
       import('markdown-it-multimd-table'),
       import('@modules/highlightjs-copy'),
+      import("markdown-it-link-attributes"),
       import('highlight.js/lib/languages/c'),
       import('highlight.js/lib/languages/php'),
       import('highlight.js/lib/languages/typescript'),
@@ -70,6 +71,7 @@ export async function createMarkdownRenderer() {
     breaks: true,
     linkify: true,
     typographer: true,
+
     highlight(str, lang) {
       if (lang && hljs.getLanguage(lang)) {
         try {
@@ -90,11 +92,26 @@ export async function createMarkdownRenderer() {
     multibody: true,
     autolabel: true,
   })
+  md.use(mila, {
+    attrs: {
+      target: "_blank",
+      rel: "noopener",
+      class: "bg-[#f0f1f2] inline-block mr-1 px-3 rounded-full text-[#8b90a3]",
+    },
+  })
 
-  return (content: string) => {
+  return (content: string, sourceList: Source[]) => {
     content = content
       // remove formatter
       .replace(frontmatterReg, '')
+      .replace(/\[\[([cC])itation/g, "[citation")
+      .replace(/[cC]itation:(\d+)]]/g, "citation:$1]")
+      .replace(/\[\[([cC]itation:\d+)]](?!])/g, `[$1]`)
+      .replace(/\[[cC]itation:(\d+)]/g, (val) => {
+        if (!sourceList.length) return ''
+        const index = Number(val.split(':')[1].split(']')[0])
+        return `[${index}](${sourceList[index - 1]?.url})`
+      })
       // hash link add base url
       .replace(markdownHashLinkReg, (all, hash) => all.replace(hash, `${tsConfigSiteRef}${hash}`))
       // add base url

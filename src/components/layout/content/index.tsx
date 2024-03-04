@@ -13,9 +13,7 @@ const Content = () => {
     const { id: searchId } = useParams()
     const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
     useEffect(() => {
-        console.log();
-
-        getUserSearchRecordsRequest()
+       getUserSearchRecordsRequest()
     }, [searchId])
     const getUserSearchRecordsRequest = async () => {
         const { data } = await getUserSearchRecords()

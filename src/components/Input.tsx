@@ -11,13 +11,13 @@ const InputTextear = ({ inputSendMessage, loading }: InputTextearProps) => {
     const classNames = {
         start: {
             button: [],
-            boxContainerClass: ['items-center', 'duration-200', 'transition-all', 'border-[4px] border-[#828282]', 'flex', 'w-full', 'gap-3', 'outline-none', 'px-2 py-1.5', 'focus:outline-none', 'focus:ring-borderMain', 'font-sans', 'bg-[#fff]'],
+            boxContainerClass: ['items-center', 'duration-200', 'transition-all', 'border-[3px] border-[#828282]', 'flex', 'w-full', 'gap-3', 'outline-none', 'px-2 py-1.5', 'focus:outline-none', 'focus:ring-borderMain', 'font-sans', 'bg-[#fff]'],
             textareaClass: [' overflow-auto ', 'pt-[2px]', 'text-[#828282]', 'md:placeholder:leading-8 overflow-hidden', 'placeholder:leading-8', 'max-h-[190px]', 'duration-200', 'transition-all', 'focus:outline-none ', ' flex-1', 'lg:text-2xl text-xl', 'bg-transparent', 'resize-none'],
             sendClass: ['flex', 'items-center', 'gap-5', 'bg-[#fff]']
         },
         end: {
             button: ['flex', 'dark:bg-offsetDark', 'rounded-l-lg', 'col-start-1', 'row-start-2', '-ml-2'],
-            boxContainerClass: ['border-[4px] border-[#828282]', 'duration-200', 'transition-all', 'bg-[#fff]', 'py-6 px-5', 'items-center', 'grid', 'grid-rows-1fr-auto', 'grid-cols-3', 'w-full', 'outline-none', 'focus:outline-none', 'gap-3'],
+            boxContainerClass: ['border-[3px] border-[#828282]', 'duration-200', 'transition-all', 'bg-[#fff]', 'py-6 px-5', 'items-center', 'grid', 'grid-rows-1fr-auto', 'grid-cols-3', 'w-full', 'outline-none', 'focus:outline-none', 'gap-3'],
             textareaClass: [' overflow-auto ', 'pt-[2px]', 'text-[#828282]', 'col-start-1', 'col-end-4', 'pb-sm', 'overflow-auto', 'outline-none', 'w-full', 'font-sans', 'caret-superDuper', 'resize-none', 'bg-background', 'text-textMain', 'placeholder-textOff', 'max-h-[190px]', 'focus:outline-none', ' flex-1', 'lg:text-2xl text-xl', 'bg-transparent', 'resize-none'],
             sendClass: ['flex', 'bg-[#fff]', 'items-center', 'justify-self-end', 'bg-background', 'rounded-full', 'space-x-2', 'col-start-3', 'row-start-2', '-mr-2']
         }
