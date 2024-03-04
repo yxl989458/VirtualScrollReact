@@ -18,9 +18,7 @@ import { generateRandomString } from "@utils/randomStr"
 import { useNavigate, useParams } from "react-router-dom"
 
 const App = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id: routerId } = useParams()
-
   const [chatHistroy, setChatHistroy] = useState<chatHistroyType[]>([])
   const navigate = useNavigate()
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
@@ -54,7 +52,6 @@ const App = () => {
 
   const inputSendMessage = async (val: string) => {
     const randomStr = generateRandomString()
-    //TODO: 根据conversationUuid 请求接口getChatRecord 判断是否有历史记录 如果有进行下一步操作 未知 需讨论
     const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
     if (gen_successed) return
     navigate(`/search/${randomStr}`)
@@ -138,8 +135,10 @@ const App = () => {
     if (!data.gen_successed) return
     const defaultChat = generateChatHistroyDefault()
     const sourceList = data.ref_links.map((item) => ({ ...item, id: uuidV4() }))
-    const insert: Array<chatHistroyType>= [{ ...defaultChat, loadingAnswer: false, loadingSource: false, conversationUuid: data.uuid, AnswerMessage: data.gen_text, userMessage: data.prompt, sourceList }]
+    const AnswerMessageFormatMarkdown = (await PropertyRemoteMarkdown).mdRender(data.gen_text)
+    const insert: Array<chatHistroyType> = [{ ...defaultChat, loadingAnswer: false, loadingSource: false, conversationUuid: data.uuid, AnswerMessage: AnswerMessageFormatMarkdown, userMessage: data.prompt, sourceList }]
     setChatHistroy(insert)
+    setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
   }
   return (
     <>
