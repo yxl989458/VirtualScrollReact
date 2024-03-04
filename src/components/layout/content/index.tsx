@@ -13,11 +13,13 @@ const Content = () => {
     const { id: searchId } = useParams()
     const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
     useEffect(() => {
+        console.log();
+
         getUserSearchRecordsRequest()
     }, [searchId])
     const getUserSearchRecordsRequest = async () => {
         const { data } = await getUserSearchRecords()
-        setUserSearchRecords(data.splice(0, 5))
+        setUserSearchRecords(() => data)
     }
 
     const { siderCollapsed } = useAppState()
@@ -37,7 +39,7 @@ const Content = () => {
                     {
                         (siderCollapsed && <SiderMobile userSearchRecords={userSearchRecords} />)
                     }
-                    <SiderPC  userSearchRecords={userSearchRecords} />
+                    <SiderPC userSearchRecords={userSearchRecords} />
                 </div>
                 <Outlet></Outlet>
             </div >

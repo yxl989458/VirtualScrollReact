@@ -23,9 +23,10 @@ const App = () => {
   const navigate = useNavigate()
   const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
   const containerRef = useRef<HTMLDivElement>(null)
-  async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, reloadUuid?: string,) {
+  async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, randomStr: string, isGetUserRecord: boolean, reloadUuid?: string,) {
     try {
       const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
+      navigate(`/search/${randomStr}?isGetUserRecord=${isGetUserRecord}`)
       getSourceListByUuid(conversation_uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
@@ -54,14 +55,8 @@ const App = () => {
     const randomStr = generateRandomString()
     const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
     if (gen_successed) return
-    navigate(`/search/${randomStr}`)
     setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
-    requestQa(val, false, randomStr)
-    document.body.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "nearest"
-    });
+    requestQa(val, false, randomStr, randomStr,true)
   }
   const getSourceListByUuid = async (uuidP: string, isReload: boolean = false) => {
     try {
@@ -87,7 +82,7 @@ const App = () => {
     updateChatHistroyFieldsByUuid(updateUuid, 'loadingSource', true)
     updateChatHistroyFieldsByUuid(updateUuid, 'sourceList', [])
     const chatHistroyRes = chatHistroy.find((item) => item.uuid === updateUuid)
-    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, updateUuid)
+    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, routerId!,false, updateUuid)
   }
   const SiderParent = useRef(null)
   useEffect(() => {
