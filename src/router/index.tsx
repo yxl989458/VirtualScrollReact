@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Content } from '@components/layout'
-import Home from '@views/home'
+import Chat from '@views/chat'
 import { useAuthState } from '@stores/modules/auth'
 import { useOpenlogin } from '@hooks/useOpenLogin'
 import LoginTripartite from '@views/login/loginTripartite'
+import Home from '@views/home'
 
 
 
@@ -27,7 +28,7 @@ const Router = () => {
                     <Route path='/loginTripartite' element={<LoginTripartite />}></Route>
                     <Route path='/' element={<Content />}>
                         <Route index element={<Home />}></Route>
-                        <Route path='/search/:id' element={<Home />}></Route>
+                        <Route path='/search/:id' element={<Chat />}></Route>
                         {/* <Route path='/user' element={<User />}></Route> */}
                     </Route>
                 </Routes>

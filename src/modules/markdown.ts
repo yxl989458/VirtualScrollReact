@@ -100,7 +100,7 @@ export async function createMarkdownRenderer() {
     },
   })
 
-  return (content: string, sourceList: Source[]) => {
+  return (content: string, sourceList?: Source[]) => {
     content = content
       // remove formatter
       .replace(frontmatterReg, '')
@@ -108,9 +108,11 @@ export async function createMarkdownRenderer() {
       .replace(/[cC]itation:(\d+)]]/g, "citation:$1]")
       .replace(/\[\[([cC]itation:\d+)]](?!])/g, `[$1]`)
       .replace(/\[[cC]itation:(\d+)]/g, (val) => {
-        if (!sourceList.length) return ''
+        if(!sourceList) return ''
+        if (!sourceList!.length) return ''
         const index = Number(val.split(':')[1].split(']')[0])
-        return `[${index}](${sourceList[index - 1]?.url})`
+        if (index - 1 >= sourceList!.length) return ''
+        return `[${index}](${sourceList![index - 1]?.url})`
       })
       // hash link add base url
       .replace(markdownHashLinkReg, (all, hash) => all.replace(hash, `${tsConfigSiteRef}${hash}`))

@@ -1,7 +1,7 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "@nextui-org/react";
 import { memo, useRef, useState } from "react";
-
+import Logo from '@/assets/logo.svg'
 interface InputTextearProps {
     inputSendMessage: (val: string) => void
     loading?: boolean
@@ -52,7 +52,7 @@ const InputTextear = ({ inputSendMessage, loading }: InputTextearProps) => {
                     <div style={{ borderRadius: inputValue.length < 30 ? '20px' : '20px' }} className={inputValue.length <= 30 ? classNames.start.boxContainerClass.join(' ') : classNames.end.boxContainerClass.join(' ')}>
                         <div className={inputValue.length <= 30 ? classNames.start.button.join(' ') : classNames.end.button.join(' ')}>
                             <Button variant="light" isIconOnly>
-                                <img src="/src/assets/logo.svg" alt="" className="w-6 h-7" />
+                                <img src={Logo} alt="" className="w-6 h-7" />
                             </Button>
                         </div>
                         <textarea onKeyDown={textareaKeyDown} ref={textareaRef} style={{ height: 32, maxHeight: '290px' }} placeholder="输入你想了解的" className={inputValue.length <= 30 ? classNames.start.textareaClass.join(' ') : classNames.end.textareaClass.join(' ')} value={inputValue} onChange={handleInputChange} onInput={handleInputChange} />

@@ -1,166 +1,55 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import AnswerMessage from "../../components/Answer/AnswerMessage"
-import SourceList from "../../components/Source/SourceList"
-import TitleBlock from "../../components/TitleBlock"
-import UserMessage from "../../components/UserMessage"
-import { memo, useEffect, useRef, useState } from "react"
-import 'highlight.js/styles/atom-one-light.css'
-import AnswerMessageFooter from "@components/Answer/AnswerMessageFooter"
-import InputTextear from "@components/Input"
-import { v4 as uuidV4 } from "uuid"
-import { chatHistroyType, generateChatHistroyDefault } from "@stores/modules/chatHistroy"
-import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
-import SourceListSkeleton from "@components/Source/SourceListSkeleton"
-import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
-import { useStreamRead } from "@hooks/useStreamRead"
-import autoAnimate from '@formkit/auto-animate'
+import { getSelectedHotSearch } from "@api/chat"
+import { Icon } from "@iconify/react/dist/iconify.js"
+import { HotSearch } from "@/types/Apichat"
+import { useEffect, useState } from "react"
+import { Button } from "@nextui-org/react"
+import { useNavigate } from "react-router-dom"
 import { generateRandomString } from "@utils/randomStr"
-import { useNavigate, useParams } from "react-router-dom"
+import Logo from '@/assets/logo.svg'
 
-const App = () => {
-  const { id: routerId } = useParams()
-  const [chatHistroy, setChatHistroy] = useState<chatHistroyType[]>([])
-  const navigate = useNavigate()
-  const [PropertyRemoteMarkdown, setPropertyRemoteMarkdown] = useState(async () => await usePropertyRemoteMarkdown())
-  const containerRef = useRef<HTMLDivElement>(null)
-  async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, randomStr: string, isGetUserRecord: boolean, reloadUuid?: string,) {
-    try {
-      const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal })
-      navigate(`/search/${randomStr}?isGetUserRecord=${isGetUserRecord}`)
-      getSourceListByUuid(conversation_uuid, isReload)
-      const { streamRead } = useStreamRead(reader)
-      streamRead(async (output: string) => {
-        const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output, chatHistroy[chatHistroy.length - 1].sourceList)
-        if (isReload && reloadUuid) {
-          updateChatHistroyFieldsByUuid(reloadUuid, 'AnswerMessage', AnswerMessageFormat)
-          return
-        }
-        updateChatHistroyLast('AnswerMessage', AnswerMessageFormat)
-      }, (isDone: boolean) => {
-        if (isDone) {
-          if (isReload && reloadUuid) {
-            updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
-          }
-          updateChatHistroyLast('loadingAnswer', false)
-          setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
-          return
-        }
-      })
-    } catch (error) {
-      throw new Error(error as string)
+const Home = () => {
+    const [hotSearch, setHotSearch] = useState<HotSearch[]>([])
+    const navigate = useNavigate()
+    const getSelectedHotSearchRequest = async () => {
+        const { data } = await getSelectedHotSearch()
+        setHotSearch(data)
     }
-  }
+    const clickHotSearch = (item: HotSearch) => {
+        navigate(`/search/${item.uuid}?isGetUserRecord=true`)
+    }
+    useEffect(() => {
+        getSelectedHotSearchRequest()
+    }, [])
 
-  const inputSendMessage = async (val: string) => {
-    const randomStr = generateRandomString()
-    const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
-    if (gen_successed) return
-    setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
-    requestQa(val, false, randomStr, randomStr, true)
-  }
-  const getSourceListByUuid = async (uuidP: string, isReload: boolean = false) => {
-    try {
-      const { data } = await getChatSource(uuidP)
-      if (data === null) getSourceListByUuid(uuidP)
-      else {
-        if (isReload) {
-          updateChatHistroyFieldsByConversationUuid(uuidP, 'loadingSource', false)
-          updateChatHistroyFieldsByConversationUuid(uuidP, 'sourceList', data.map((item) => ({ ...item, id: uuidV4() })))
-          return
-        }
-        updateChatHistroyLast('loadingSource', false)
-        updateChatHistroyLast('sourceList', data.map((item) => ({ ...item, id: uuidV4() })))
-      }
-    } catch (error) {
-      throw new Error(error as string)
-
-    }
-  }
-  const reloadChat = async (updateUuid: string) => {
-    updateChatHistroyFieldsByUuid(updateUuid, 'AnswerMessage', '')
-    updateChatHistroyFieldsByUuid(updateUuid, 'loadingAnswer', true)
-    updateChatHistroyFieldsByUuid(updateUuid, 'loadingSource', true)
-    updateChatHistroyFieldsByUuid(updateUuid, 'sourceList', [])
-    const chatHistroyRes = chatHistroy.find((item) => item.uuid === updateUuid)
-    await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid!, routerId!, false, updateUuid)
-  }
-  const SiderParent = useRef(null)
-  useEffect(() => {
-    SiderParent.current && autoAnimate(SiderParent.current, {
-      easing: 'linear',
-      disrespectUserMotionPreference: true
-    })
-  }, [SiderParent])
-  const updateChatHistroyFieldsByUuid = <T extends keyof chatHistroyType>(id: string, fields: T, value: chatHistroyType[T]) => {
-    setChatHistroy(chatHistroyList => {
-      const index = chatHistroyList.findIndex((item) => item['uuid'] === id)
-      chatHistroyList[index][fields] = value
-      return [...chatHistroyList]
-    })
-  }
-  const updateChatHistroyFieldsByConversationUuid = <T extends keyof chatHistroyType>(id: string, fields: T, value: chatHistroyType[T]) => {
-    setChatHistroy(chatHistroyList => {
-      const index = chatHistroyList.findIndex((item) => item['conversationUuid'] === id)
-      chatHistroyList[index][fields] = value
-      return [...chatHistroyList]
-    })
-  }
-  const updateChatHistroyLast = <T extends keyof chatHistroyType>(fields: T, value: chatHistroyType[T]) => {
-    setChatHistroy(chatHistroyList => {
-      chatHistroyList[chatHistroyList.length - 1][fields] = value
-      return [...chatHistroyList]
-    })
-  }
-  useEffect(() => {
-    document.body.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "nearest"
-    });
-  }, [containerRef.current])
-  useEffect(() => {
-    if (!routerId) {
-      setChatHistroy([])
-      return
-    }
-    routerId && getChatRecordRequest(routerId)
-  }, [routerId])
-  async function getChatRecordRequest(uuid: string) {
-    const { data } = await getChatRecord(uuid)
-    if (!data.gen_successed) return
-    const defaultChat = generateChatHistroyDefault()
-    const sourceList = data.ref_links.map((item) => ({ ...item, id: uuidV4() }))
-    const AnswerMessageFormatMarkdown = (await PropertyRemoteMarkdown).mdRender(data.gen_text, sourceList)
-    const insert: Array<chatHistroyType> = [{ ...defaultChat, loadingAnswer: false, loadingSource: false, conversationUuid: data.uuid, AnswerMessage: AnswerMessageFormatMarkdown, userMessage: data.prompt, sourceList }]
-    setChatHistroy(insert)
-    setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
-  }
-  return (
-    <>
-      {
-        chatHistroy.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
-          <div className="col-span-2 flex flex-col justify-between">
-            <div>
-              <UserMessage message={item.userMessage} />
-              {
-                item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
-              }
-              <AnswerMessage message={item.AnswerMessage} />
+    const [issuse, setIssuse] = useState('')
+    return <div className="bg-white   flex-col   lg:h-screen  h-[calc(100vh-100px)] w-full   gap-6  flex items-center justify-center">
+        <div className=" w-full   items-center justify-center gap-1 lg:flex hidden">
+            <img className="w-8 h-10" src={Logo} />
+            <span className="text-[#828282] font-bold text-2xl ">AskAsk AI</span>
+        </div>
+        <div className="text-[#606060] font-bold text-2xl">有不懂，就问问AI</div>
+        <div className="border-[3px] border-[#828282] rounded-2xl lg:w-[646px] w-4/5 lg:min-h-[196px] min-h-[100px] py-4 px-3 flex justify-between gap-2 items-center">
+            <div className="flex flex-col lg:min-h-[166px] min-h-[100px]   w-full  justify-between relative">
+                <textarea value={issuse} onChange={(e) => setIssuse(e.target.value)} placeholder="输入你想了解的" className="resize-none text-xl text-[#828282DB] pr-2 focus:outline-none absolute left-0 bottom-10 top-0 w-full  h-[100%]" ></textarea>
+                {/* <div className="absolute bottom-0 left-0 flex gap-1 items-center">
+                    <span>Pro</span>
+                    <Switch defaultSelected aria-label="Automatic updates" size="sm" />
+                </div> */}
             </div>
-            <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
-          </div>
-          {/* <AccordionCom /> */}
-          <div className="col-span-1">
-            <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
+            <Button onClick={() => {
+                const randomStr = generateRandomString()
+                navigate(`/search/${randomStr}?question=${issuse}`)
+            }} isDisabled={issuse.length == 0} variant="light" isIconOnly>
+                <Icon icon='material-symbols-light:bubble-chart' width={58} height={58} color="#828282"></Icon>
+            </Button>
+        </div>
+        <div className="justify-center lg:flex lg:flex-wrap lg:items-center lg:gap-y-2 lg:gap-x-10 mt-5 grid gap-3  grid-cols-1 place-items-center lg:px-0 px-10">
+            <div className="flex gap-1 items-center text-center justify-center"><Icon icon='mingcute:fire-fill' width={24} height={24} color="#828282" /> <span className="text-[#828282] text-lg  font-bold">热门问题：</span></div>
             {
-              item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />
+                hotSearch.map((item) => <div key={item.uuid} className="text-[#828282] text-center  underline border-[#828282] hover:text-gray-800 text-lg cursor-pointer" onClick={() => clickHotSearch(item)}>{item.prompt}</div>)
             }
-          </div>
-        </div>))
-      }
-      {!routerId && <InputTextear loading={false} inputSendMessage={inputSendMessage} />}
-
-    </>)
+        </div>
+    </div>
 }
 
-export default memo(App)
+export default Home

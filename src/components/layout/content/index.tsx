@@ -13,13 +13,12 @@ const Content = () => {
     const { id: searchId } = useParams()
     const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
     useEffect(() => {
-       getUserSearchRecordsRequest()
+        getUserSearchRecordsRequest()
     }, [searchId])
     const getUserSearchRecordsRequest = async () => {
         const { data } = await getUserSearchRecords()
         setUserSearchRecords(() => data)
     }
-
     const { siderCollapsed } = useAppState()
     const SiderParent = useRef(null)
     useEffect(() => {
@@ -29,8 +28,8 @@ const Content = () => {
         })
     }, [SiderParent])
     return (
-        <div className="flex lg:ml-[300px] justify-center flex-col items-center">
-            <div className="bg-white pb-44 xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
+        <div className="flex lg:ml-[300px] justify-center flex-col items-center px-1">
+            <div className="bg-white m-auto  xl:w-[75rem] md:w-[50rem] min-h-screen w-[400px] sm:w-[28rem]" >
                 {/* Router View */}
                 <Header />
                 <div ref={SiderParent} >

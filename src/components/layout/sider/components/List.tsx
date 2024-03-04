@@ -1,13 +1,28 @@
 import { Icon } from "@iconify/react/dist/iconify.js"
-import { UserSearchRecords } from "@/types/Apichat"
+import { HotSearch, UserSearchRecords } from "@/types/Apichat"
 import { useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { getSelectedHotSearch } from "@api/chat"
 interface listProprs {
     userSearchRecords: UserSearchRecords[]
 }
 const List = ({ userSearchRecords }: listProprs) => {
+
     const navigate = useNavigate()
+
+    const [hotSearch, setHotSearch] = useState<HotSearch[]>([])
+    const getSelectedHotSearchRequest = async () => {
+        const { data } = await getSelectedHotSearch()
+        setHotSearch(data)
+    }
+    useEffect(() => {
+        getSelectedHotSearchRequest()
+    }, [])
+
+
+
     function searchRecord(item: UserSearchRecords) {
-        navigate(`/search/${item.uuid}`)
+        navigate(`/search/${item.uuid}?isGetUserRecord=true`)
     }
     return (
         <>
@@ -18,23 +33,24 @@ const List = ({ userSearchRecords }: listProprs) => {
                 </div>
                 <div className="flex gap-3 items-center cursor-pointer">
                     <Icon icon="icon-park-twotone:all-application" width={30} height={30} color="#828282" />
-                    <span className="text-[#828282] font-bold">广场</span>
+                    <span className="text-[#828282] font-bold">热门搜索</span>
                 </div>
                 <div className="pl-4 py-1">
                     <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
-                        <p className="text-sm cursor-pointer truncate text-[#828282]">宗庆后如何创立娃哈哈</p>
-                        <p className="text-sm cursor-pointer  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm cursor-pointer  truncate text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="text-sm cursor-pointer text-[#828282]">淮海战役伤亡人数是多少</p>
-                        <p className="truncate  text-[#828282] text-sm cursor-pointer">介绍下python pickle模块介绍下python pickle模块...</p>
+                        {
+                            hotSearch.map(item => <p onClick={() => {
+                                navigate(`/search/${item.uuid}?isGetUserRecord=true`)
+                            }} key={item.uuid} className="text-sm cursor-pointer  truncate text-[#828282]">{item.prompt}</p>)
+                        }
+
                     </div>
                 </div>
                 <div className="flex gap-3 items-center cursor-pointer">
                     <Icon icon="pepicons-pop:menu" width={30} height={30} color="#828282" />
-                    <span className="text-[#828282] font-bold">知识库</span>
+                    <span className="text-[#828282] font-bold">搜索记录</span>
                 </div>
-                <div className="pl-4 py-1">
-                    <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
+                <div className="pl-4 py-1 overflow-auto h-[calc(100vh-440px)] lg:h-auto">
+                    <div className="border-l-2 px-2 border-[#cccccc]    flex flex-col gap-4">
                         {
                             userSearchRecords.map(item => <p onClick={() => searchRecord(item)} key={item.uuid} className="text-sm cursor-pointer  truncate text-[#828282]" >{item.prompt}</p>)
                         }
