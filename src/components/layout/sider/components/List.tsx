@@ -13,7 +13,8 @@ const List = ({ userSearchRecords }: listProprs) => {
     const [hotSearch, setHotSearch] = useState<HotSearch[]>([])
     const getSelectedHotSearchRequest = async () => {
         const { data } = await getSelectedHotSearch()
-        setHotSearch(data)
+        const dataSplice = data.sort(() => Math.random() - 0.5).splice(0, 8)
+        setHotSearch(dataSplice)
     }
     useEffect(() => {
         getSelectedHotSearchRequest()
@@ -35,7 +36,7 @@ const List = ({ userSearchRecords }: listProprs) => {
                     <Icon icon="icon-park-twotone:all-application" width={30} height={30} color="#828282" />
                     <span className="text-[#828282] font-bold">热门搜索</span>
                 </div>
-                <div className="pl-4 py-1">
+                <div className="pl-4 py-1 overflow-auto ">
                     <div className="border-l-2 px-2 border-[#cccccc]  flex flex-col gap-4">
                         {
                             hotSearch.map(item => <p onClick={() => {
@@ -49,7 +50,7 @@ const List = ({ userSearchRecords }: listProprs) => {
                     <Icon icon="pepicons-pop:menu" width={30} height={30} color="#828282" />
                     <span className="text-[#828282] font-bold">搜索记录</span>
                 </div>
-                <div className="pl-4 py-1 overflow-auto h-[calc(100vh-440px)] lg:h-auto">
+                <div className="pl-4 py-1 overflow-auto xxs:h-[calc(100vh-550px)]">
                     <div className="border-l-2 px-2 border-[#cccccc]    flex flex-col gap-4">
                         {
                             userSearchRecords.map(item => <p onClick={() => searchRecord(item)} key={item.uuid} className="text-sm cursor-pointer  truncate text-[#828282]" >{item.prompt}</p>)
