@@ -13,6 +13,7 @@ import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import { useParams, useSearchParams } from "react-router-dom"
+import eventBus from "@modules/eventBus"
 
 const App = () => {
   const { id: routerId } = useParams()
@@ -54,19 +55,19 @@ const App = () => {
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
         setOutputValue(output)
-        // const AnswerMessageFormat = (await PropertyRemoteMarkdown).mdRender(output, chatHistroy[chatHistroy.length - 1]?.sourceList)
         if (isReload && reloadUuid) {
           setIsReload(true)
           return
         }
-        // updateChatHistroyLast('AnswerMessage', AnswerMessageFormat)
       }, (isDone: boolean) => {
         if (isDone) {
           if (isReload && reloadUuid) {
             updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
+            return
           }
           updateChatHistroyLast('loadingAnswer', false)
           setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
+          eventBus.emit('getUserSearchRecords')
           return
         }
       })
@@ -78,7 +79,7 @@ const App = () => {
   const inputSendMessage = async (val: string, randomStr: string) => {
     const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
     if (gen_successed) {
-      return
+      return 
     }
     setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
     requestQa(val, false, randomStr)

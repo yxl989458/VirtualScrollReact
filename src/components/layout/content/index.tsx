@@ -1,19 +1,25 @@
 import { useAppState } from "@stores/modules/app"
 import { useEffect, useState } from "react"
-import { Outlet, useParams } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import { SiderMobile, SiderPC } from ".."
 import Header from "@components/Header"
 import { getUserSearchRecords } from "@api/chat"
 import { UserSearchRecords } from "@/types/Apichat"
+import eventBus from "@modules/eventBus"
 
 
 
 const Content = () => {
-    const { id: searchId } = useParams()
     const [userSearchRecords, setUserSearchRecords] = useState<UserSearchRecords[]>([])
     useEffect(() => {
+
         getUserSearchRecordsRequest()
-    }, [searchId])
+        eventBus.on('getUserSearchRecords', () => {
+            getUserSearchRecordsRequest()
+        })
+    }, [])
+
+
     const getUserSearchRecordsRequest = async () => {
         const { data } = await getUserSearchRecords()
         setUserSearchRecords(() => data)
