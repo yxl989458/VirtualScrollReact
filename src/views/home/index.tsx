@@ -43,7 +43,7 @@ const Home = () => {
                 hotSearch.map((item) => <div key={item.uuid} className="text-[#828282] truncate xxs:w-[250px]  text-center  underline border-[#828282] hover:text-gray-800  cursor-pointer" onClick={() => clickHotSearch(item)}>{item.prompt}</div>)
             }
         </div>
-        <div className="border-[3px] border-[#828282] rounded-2xl lg:w-[646px] w-4/5  h-auto xxs:max-h-[200px] lg:max-h-[446px]   px-3 flex justify-between gap-2 items-center">
+        <div className="border-[3px] border-[#828282] rounded-2xl lg:w-[646px] w-4/5  h-auto xxs:max-h-[200px] lg:max-h-[446px] py-4 xxs:py-1  px-3 flex justify-between gap-2 items-center">
             <div className="flex flex-col h-full  w-full  justify-between relative">
                 <textarea value={issuse} onChange={InputChange} placeholder="输入你想了解的" className="resize-none text-xl text-[#828282DB] pr-2 focus:outline-none   leading-10     w-full  h-full " ></textarea>
             </div>

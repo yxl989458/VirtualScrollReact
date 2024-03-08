@@ -12,7 +12,6 @@ import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
-import autoAnimate from '@formkit/auto-animate'
 import { useParams, useSearchParams } from "react-router-dom"
 
 const App = () => {
@@ -112,13 +111,7 @@ const App = () => {
     const chatHistroyRes = chatHistroy.find((item) => item.uuid === updateUuid)
     await requestQa(chatHistroyRes!.userMessage, true, chatHistroyRes!.conversationUuid, updateUuid)
   }
-  const SiderParent = useRef(null)
-  useEffect(() => {
-    SiderParent.current && autoAnimate(SiderParent.current, {
-      easing: 'linear',
-      disrespectUserMotionPreference: true
-    })
-  }, [SiderParent])
+
   const updateChatHistroyFieldsByUuid = <T extends keyof chatHistroyType>(id: string, fields: T, value: chatHistroyType[T]) => {
     setChatHistroy(chatHistroyList => {
       const index = chatHistroyList.findIndex((item) => item['uuid'] === id)

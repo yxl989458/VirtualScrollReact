@@ -7,6 +7,7 @@ export interface authState {
     getToken: () => string | null
     setToken: (token: string) => void
     loginTripartite: (code: string | null) => void
+    logout: () => void
 }
 export const useAuthState = create<authState>()(
     devtools(
@@ -18,6 +19,10 @@ export const useAuthState = create<authState>()(
                 loginTripartite: async (code: string | null) => {
                     const { data } = await loginTripartiteApi(code)
                     get().setToken(data.jwt)
+                },
+                logout() {
+                    set({ token: null })
+                    localStorage.clear()
                 }
             }),
             {
