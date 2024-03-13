@@ -162,7 +162,7 @@ const App = () => {
     <>
       {
         chatHistroy.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
-          <div className="col-span-2 flex flex-col justify-between">
+          <div className="col-span-2 flex flex-col justify-between" id="chatViews"  >
             <div>
               <UserMessage message={item.userMessage} />
               {

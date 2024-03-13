@@ -20,11 +20,10 @@ const List = ({ userSearchRecords }: listProprs) => {
         getSelectedHotSearchRequest()
     }, [])
 
-
-
     function searchRecord(item: UserSearchRecords) {
         navigate(`/search/${item.uuid}?isGetUserRecord=true`)
     }
+
     return (
         <>
             <main className="flex gap-5 flex-col">
