@@ -107,11 +107,14 @@ const AnswerMessageFooter = ({ chatHistroy, reloadChat }: AnswerMessageFooter) =
 
                     }
                 </Tooltip>
-                <Tooltip content="Share This Answer" className="text-xl font-bold">
-                    <Button onClick={share} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon color="#999" icon="mdi:share-variant" width={24} height={24} />}>
-                        <span className="text-[#999]">Share</span>
-                    </Button>
-                </Tooltip>
+                <div className="hidden xxs:block">
+                    <Tooltip content="Share This Answer" className="text-xl font-bold">
+                        <Button onClick={share} className="md:text-xl px-1 md:font-bold" variant="light" startContent={<Icon color="#999" icon="mdi:share-variant" width={24} height={24} />}>
+                            <span className="text-[#999]">Share</span>
+                        </Button>
+                    </Tooltip>
+                </div>
+
             </div>
             <div className="flex md:gap-4">
                 {/* <Tooltip content="Inaccurate or unhelpful" className="md:text-xl md:font-bold">
