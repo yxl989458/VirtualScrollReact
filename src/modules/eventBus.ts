@@ -9,6 +9,10 @@ export class EventBus {
         type: T,
         callback: EventMap[T]
     ): void {
+        
+        if (typeof type !== "function") {
+            throw new Error("EventBus 'on' method expects a callback function.");
+          }
         if (this.eventMap.some((event) => Object.prototype.hasOwnProperty.call(event, type))) {
             console.warn(`Event ${type} is already registered`);
             const index = this.eventMap.findIndex(
