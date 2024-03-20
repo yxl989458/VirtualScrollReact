@@ -1,5 +1,5 @@
 export class EventBus {
-    private events: Record<string, ((...arg: unknown[]) => void)[]> = {};
+     events: Record<string, ((...arg: unknown[]) => void)[]> = {};
 
     public on(eventName: string, callback: (...arg: unknown[]) => void): this {
         if (typeof callback !== "function") {
