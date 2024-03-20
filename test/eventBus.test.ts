@@ -13,6 +13,19 @@ describe("eventBusDescribe", () => {
         ]
       `)
     })
-    eventBus.emit('submit4', 1, 2, 3, 4)
+    eventBus.on("submit4", (...arg: unknown[]) => {
+          console.log(arg);
+          expect(arg).toMatchInlineSnapshot(`
+            [
+              1,
+              2,
+              3,
+              4,
+            ]
+          `)
+          
+    })
+   eventBus.emit('submit4', 1, 2, 3, 4)
+  
   });
 })

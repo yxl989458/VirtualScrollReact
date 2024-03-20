@@ -1,52 +1,70 @@
-type EventMap = {
-    [key: string]: (...args: unknown[]) => void;
-};
-
 export class EventBus {
-    private eventMap: EventMap[] = [];
+    private events: Record<string, ((...arg: unknown[]) => void)[]> = {};
 
-    public on<T extends keyof EventMap>(
-        type: T,
-        callback: EventMap[T]
-    ): void {
-        
-        if (typeof type !== "function") {
+    public on(eventName: string, callback: (...arg: unknown[]) => void): this {
+        if (typeof callback !== "function") {
             throw new Error("EventBus 'on' method expects a callback function.");
-          }
-        if (this.eventMap.some((event) => Object.prototype.hasOwnProperty.call(event, type))) {
-            console.warn(`Event ${type} is already registered`);
-            const index = this.eventMap.findIndex(
-                (event) => Object.prototype.hasOwnProperty.call(event, type)
-            );
-            this.eventMap[index][type] = callback;
-            return;
         }
-        this.eventMap.push({ [type]: callback });
+
+        if (!this.events[eventName]) {
+            this.events[eventName] = [];
+        }
+
+        this.events[eventName].push(callback);
+
+        return this;
     }
 
-    public emit<T extends keyof EventMap>(
-        type: T,
-        ...args: Parameters<EventMap[T]>
-    ): void {
-        const events = this.eventMap.filter(
-            (event) => Object.prototype.hasOwnProperty.call(event, type)
-        );
-        if (events.length === 0) {
-            throw new Error(`Event ${type} is not found`);
+    public emit(eventName: string, ...args: unknown[]): this {
+        const callbacks = this.events[eventName];
+        if (callbacks) {
+            callbacks.forEach((callback) => callback(...args));
         }
-        events.forEach((event) => event[type].apply(this, args));
+
+        return this;
     }
 
-    public off<T extends keyof EventMap>(type: T): void {
-        const index = this.eventMap.findIndex(
-            (event) => Object.prototype.hasOwnProperty.call(event, type)
-        );
-        if (index === -1) {
-            throw new Error(`Event ${type} is not found`);
+    public off(event?: string | string[], callback?: (...arg: unknown[]) => void): this {
+        // 清空所有事件监听器
+        if (!event || (Array.isArray(event) && !event.length)) {
+            this.events = {};
+            return this;
         }
-        this.eventMap.splice(index, 1);
+
+        // 处理事件数组
+        if (Array.isArray(event)) {
+            event.forEach((e) => this.off(e, callback));
+            return this;
+        }
+
+        // 如果没有提供回调函数，则删除该事件的所有监听器
+        if (!callback) {
+            delete this.events[event];
+            return this;
+        }
+
+        // 移除特定的回调函数
+        const callbacks = this.events[event];
+        if (callbacks) {
+            const index = callbacks.indexOf(callback);
+            if (index > -1) {
+                callbacks.splice(index, 1);
+            }
+        }
+
+        return this;
+    }
+
+    public once(eventName: string, callback: (...arg: unknown[]) => void): this {
+        const onceWrapper = (...args: unknown[]) => {
+            this.off(eventName, onceWrapper);
+            callback(...args);
+        };
+
+        this.on(eventName, onceWrapper);
+
+        return this;
     }
 }
 
 export default new EventBus();
-
