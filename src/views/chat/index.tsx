@@ -28,6 +28,8 @@ const App = () => {
   const [isUserInput, setIsUserInput] = useState(false)
   const [isDialogue, setIsDialogue] = useState(false)
 
+
+
   useEffect(() => {
     if (searchParams.get('question')) {
       // sendQuestion(searchParams.get('question')!)
@@ -46,6 +48,11 @@ const App = () => {
   }
 
   useEffect(() => {
+    setIsDialogue(() => false)
+    setIsUserInput(() => false)
+  }, [useParams()])
+
+  useEffect(() => {
     if (!chatHistroy.length && !outputValue) return
     if (isReload) {
       renderMd(routerId!)
@@ -57,7 +64,8 @@ const App = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, reloadUuid?: string,) {
     try {
-      const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal, force_regenerate: !!reloadUuid })
+      setIsDialogue(() => true)
+      const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal, force_regenerate: !!reloadUuid },)
       getSourceListByUuid(conversation_uuid, isReload)
       const { streamRead } = useStreamRead(reader)
       streamRead(async (output: string) => {
@@ -172,17 +180,13 @@ const App = () => {
   function editChatMsg(item: chatHistroyType) {
     setIsUserInput(true)
     setEditUserMessage(() => item.userMessage)
-
   }
   function sendUserMessage(val: string) {
     setChatHistroy([])
     const randomStr = generateRandomString()
-    navigate(`/search/${randomStr}?question=${val}`)
+    navigate(`/search/${randomStr}?question=${val}`, { replace: true })
     setIsUserInput(false)
-
   }
-
-
   return (
     <>
       {
@@ -191,7 +195,7 @@ const App = () => {
             <div>
               <div className="flex  gap-5 items-center">
                 <UserMessage message={item.userMessage} />
-                {!isDialogue && <Icon icon="ri:edit-2-fill" width={22} height={22} className="cursor-pointer" onClick={() => editChatMsg(item)} />}
+                {!isDialogue && <Icon icon="ri:edit-2-fill" width={22} height={22} color="#999999" className="cursor-pointer self-start" onClick={() => editChatMsg(item)} />}
               </div>
               {
                 item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
@@ -201,7 +205,7 @@ const App = () => {
             <AnswerMessageFooter reloadChat={reloadChat} chatHistroy={item} key={index} />
           </div>
           {/* <AccordionCom /> */}
-          <div className="col-span-1">
+          <div className="col-span-1 mt-7">
             <TitleBlock icon="material-symbols:format-align-right-rounded" text="中文引用" />
             {
               item.loadingSource ? <SourceListSkeleton /> : <SourceList sourceList={item.sourceList} />

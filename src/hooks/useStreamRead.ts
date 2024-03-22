@@ -1,6 +1,8 @@
 
 export const useStreamRead = (reader: ReadableStreamDefaultReader<Uint8Array>) => {
-    const streamRead = async (callback: (data: string) => void, callbackDone?: (done: boolean) => void) => {
+    const streamRead = async (callback: (data: string) => void, callbackDone: (done: boolean) => void,) => {
+        console.log('isRead',);
+
         let output: string = ''
         const textDecoder = new TextDecoder();
         let whileFlag = true

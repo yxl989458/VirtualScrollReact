@@ -9,7 +9,7 @@ interface chatQaRequest {
     ask_type: string,
     llm_type: string,
     question: string
-    force_regenerate:boolean
+    force_regenerate: boolean
 }
 export const chatQaRequestWithReader = async (params: chatQaRequest) => {
     try {
