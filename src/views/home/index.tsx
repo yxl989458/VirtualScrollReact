@@ -9,6 +9,7 @@ import Logo from '@/assets/logo.svg'
 
 const Home = () => {
     const [hotSearch, setHotSearch] = useState<HotSearch[]>([])
+    const [issuse, setIssuse] = useState('')
     const navigate = useNavigate()
     const getSelectedHotSearchRequest = async () => {
         const { data } = await getSelectedHotSearch()
@@ -27,8 +28,16 @@ const Home = () => {
         setIssuse(e.target.value)
         e.target.style.height = e.target.scrollHeight + 'px'
     }
-
-    const [issuse, setIssuse] = useState('')
+    function sendTextChat() {
+        const randomStr = generateRandomString()
+        navigate(`/search/${randomStr}?question=${issuse}`)
+    }
+    function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault()
+            sendTextChat()
+        }
+    }
     return <div className="bg-white   flex-col justify-between   lg:h-screen  xxs:h-[calc(100vh-200px)] w-full   gap-6 py-10  flex items-center  lg:justify-center lg:gap-20">
         <div className="flex flex-col gap-10">
             <div className=" w-full   items-center justify-center gap-1 lg:flex hidden">
@@ -45,12 +54,9 @@ const Home = () => {
         </div>
         <div className="border-[3px] border-[#828282] rounded-2xl lg:w-[646px] w-4/5  h-auto xxs:max-h-[200px] lg:max-h-[446px] py-4 xxs:py-1  px-3 flex justify-between gap-2 items-center">
             <div className="flex flex-col h-full  w-full  justify-between relative">
-                <textarea value={issuse} onChange={InputChange} placeholder="输入你想了解的" className="resize-none text-xl text-[#828282DB] pr-2 focus:outline-none   leading-10     w-full  h-full " ></textarea>
+                <textarea value={issuse} onChange={InputChange} onKeyDown={onKeyDown} placeholder="输入你想了解的" className="resize-none text-xl text-[#828282DB] pr-2 focus:outline-none   leading-10     w-full  h-full " ></textarea>
             </div>
-            <Button onClick={() => {
-                const randomStr = generateRandomString()
-                navigate(`/search/${randomStr}?question=${issuse}`)
-            }} isDisabled={issuse.length == 0} variant="light" isIconOnly>
+            <Button onClick={sendTextChat} isDisabled={issuse.length == 0} variant="light" isIconOnly>
                 <Icon icon='material-symbols-light:bubble-chart' width={58} height={58} color="#828282"></Icon>
             </Button>
         </div>

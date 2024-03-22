@@ -12,14 +12,21 @@ import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
 import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
-import { useParams, useSearchParams } from "react-router-dom"
+import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import eventBus from "@modules/eventBus"
+import { Icon } from "@iconify/react/dist/iconify.js"
+import Input from "@components/Input"
+import { generateRandomString } from "@utils/randomStr"
 
 const App = () => {
   const { id: routerId } = useParams()
   const [searchParams] = useSearchParams()
   const [outputValue, setOutputValue] = useState('')
   const [isReload, setIsReload] = useState(false)
+  const [editUserMessage, setEditUserMessage] = useState('')
+  const navigate = useNavigate()
+  const [isUserInput, setIsUserInput] = useState(false)
+  const [isDialogue, setIsDialogue] = useState(false)
 
   useEffect(() => {
     if (searchParams.get('question')) {
@@ -62,9 +69,11 @@ const App = () => {
       }, (isDone: boolean) => {
         if (isDone) {
           if (isReload && reloadUuid) {
+            setIsDialogue(false)
             updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
             return
           }
+          setIsDialogue(false)
           updateChatHistroyLast('loadingAnswer', false)
           setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
           eventBus.emit('getUserSearchRecords')
@@ -77,9 +86,10 @@ const App = () => {
   }
 
   const inputSendMessage = async (val: string, randomStr: string) => {
+    setIsDialogue(true)
     const { data: { gen_successed } } = await getChatRecord(randomStr!, val)
     if (gen_successed) {
-      return 
+      return
     }
     setChatHistroy((chatHistroyList) => [...chatHistroyList, { ...generateChatHistroyDefault(), userMessage: val, conversationUuid: randomStr }])
     requestQa(val, false, randomStr)
@@ -158,13 +168,31 @@ const App = () => {
     setChatHistroy(insert)
     setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
   }
+
+  function editChatMsg(item: chatHistroyType) {
+    setIsUserInput(true)
+    setEditUserMessage(() => item.userMessage)
+
+  }
+  function sendUserMessage(val: string) {
+    setChatHistroy([])
+    const randomStr = generateRandomString()
+    navigate(`/search/${randomStr}?question=${val}`)
+    setIsUserInput(false)
+
+  }
+
+
   return (
     <>
       {
         chatHistroy.map((item, index) => (<div className="bg-white p-5 pb-10 lg:grid lg:grid-cols-3  gap-10   border-b-2" key={index}>
           <div className="col-span-2 flex flex-col justify-between" id="chatViews"  >
             <div>
-              <UserMessage message={item.userMessage} />
+              <div className="flex  gap-5 items-center">
+                <UserMessage message={item.userMessage} />
+                {!isDialogue && <Icon icon="ri:edit-2-fill" width={22} height={22} className="cursor-pointer" onClick={() => editChatMsg(item)} />}
+              </div>
               {
                 item.loadingAnswer ? <TitleBlock icon="wi:moon-alt-waning-crescent-2" text="Answer" loading /> : <TitleBlock icon="material-symbols:format-align-left" text="AI 回答" />
               }
@@ -181,11 +209,10 @@ const App = () => {
           </div>
         </div>))
       }
-      {/* {<InputTextear loading={false} inputSendMessage={
-        (val) => {
-          const randomStr = generateRandomString()
-          inputSendMessage(val, randomStr)
-        }} />} */}
+      {
+        isUserInput && <Input loading={isDialogue} setEditUserMessage={setEditUserMessage} value={editUserMessage} inputSendMessage={
+          (val) => { sendUserMessage(val) }} />
+      }
 
     </>)
 }
