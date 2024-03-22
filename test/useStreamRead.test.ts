@@ -16,6 +16,8 @@ describe("useStreamRead", () => {
         const { streamRead } = useStreamRead(reader!)
         await streamRead((str) => {
             expect(str).not.length(0)
+        }, (done) => {
+            expect(done).toBe(true)
         })
     })
 })
