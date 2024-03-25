@@ -1,24 +1,8 @@
-import { RESPONSEERRORMESSAGE } from "@constants/errMessage"
 import type { Source } from "@/types/source"
-import { GET, POST, POSTRESPONSE } from "@services/index"
+import { GET, POST } from "@services/index"
 import { HotSearch, UserSearchRecords } from "@/types/Apichat"
 
 
-interface chatQaRequest {
-    conversation_uuid: string,
-    ask_type: string,
-    llm_type: string,
-    question: string
-    force_regenerate: boolean
-}
-export const chatQaRequestWithReader = async (params: chatQaRequest) => {
-    try {
-        const response = await POSTRESPONSE("/search_ask", params)
-        return response.body!.getReader()
-    } catch (error) {
-        throw new Error(RESPONSEERRORMESSAGE[500])
-    }
-}
 
 //获取当前Source 
 export const getChatSource = (conversation_uuid: string) => POST<Source[]>("/search_conv_rel_info", { conversation_uuid })

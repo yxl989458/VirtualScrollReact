@@ -10,15 +10,18 @@ import { v4 as uuidV4 } from "uuid"
 import { chatHistroyType, generateChatHistroyDefault } from "@stores/modules/chatHistroy"
 import { usePropertyRemoteMarkdown } from "@hooks/usePropertyRemoteMarkdown"
 import SourceListSkeleton from "@components/Source/SourceListSkeleton"
-import { chatQaRequestWithReader, getChatRecord, getChatSource } from "@api/chat"
+import { getChatRecord, getChatSource } from "@api/chat"
 import { useStreamRead } from "@hooks/useStreamRead"
 import { useNavigate, useParams, useSearchParams } from "react-router-dom"
 import eventBus from "@modules/eventBus"
 import { Icon } from "@iconify/react/dist/iconify.js"
 import Input from "@components/Input"
 import { generateRandomString } from "@utils/randomStr"
+import FetchStream from "@services/FetchStream"
 
 const App = () => {
+  const { fetchStream } = useStreamRead('/search_ask')
+  const streamIns = useRef<FetchStream>()
   const { id: routerId } = useParams()
   const [searchParams] = useSearchParams()
   const [outputValue, setOutputValue] = useState('')
@@ -46,10 +49,12 @@ const App = () => {
     }
     updateChatHistroyLast('AnswerMessage', AnswerMessageFormat)
   }
-
   useEffect(() => {
     setIsDialogue(() => false)
     setIsUserInput(() => false)
+    if (streamIns.current) {
+      streamIns.current.abort()
+    }
   }, [useParams()])
 
   useEffect(() => {
@@ -65,29 +70,27 @@ const App = () => {
   async function requestQa(inputVal: string, isReload: boolean = false, conversation_uuid: string, reloadUuid?: string,) {
     try {
       setIsDialogue(() => true)
-      const reader = await chatQaRequestWithReader({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal, force_regenerate: !!reloadUuid },)
       getSourceListByUuid(conversation_uuid, isReload)
-      const { streamRead } = useStreamRead(reader)
-      streamRead(async (output: string) => {
+
+      const stream = fetchStream({ conversation_uuid, ask_type: "single_file", llm_type: "1", question: inputVal, force_regenerate: !!reloadUuid }, (output) => {
         setOutputValue(output)
         if (isReload && reloadUuid) {
           setIsReload(true)
           return
         }
-      }, (isDone: boolean) => {
-        if (isDone) {
-          if (isReload && reloadUuid) {
-            setIsDialogue(false)
-            updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
-            return
-          }
+      }, () => {
+        if (isReload && reloadUuid) {
           setIsDialogue(false)
-          updateChatHistroyLast('loadingAnswer', false)
-          setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
-          eventBus.emit('getUserSearchRecords')
+          updateChatHistroyFieldsByUuid(reloadUuid, 'loadingAnswer', false)
           return
         }
+        setIsDialogue(false)
+        updateChatHistroyLast('loadingAnswer', false)
+        setPropertyRemoteMarkdown(async () => await usePropertyRemoteMarkdown())
+        eventBus.emit('getUserSearchRecords')
+        return
       })
+      streamIns.current = stream
     } catch (error) {
       throw new Error(error as string)
     }

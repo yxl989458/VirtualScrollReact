@@ -1,24 +1,25 @@
+import { APIBASEURL } from "@constants/base";
+import FetchStream from "@services/FetchStream"
 
-export const useStreamRead = (reader: ReadableStreamDefaultReader<Uint8Array>) => {
-    const streamRead = async (callback: (data: string) => void, callbackDone: (done: boolean) => void,) => {
-        console.log('isRead',);
-
+export const useStreamRead = (url:string) => {
+    const fetchStream = (params: unknown, callback: (data: string) => void, callbackDone: (done: boolean) => void) => {
         let output: string = ''
-        const textDecoder = new TextDecoder();
-        let whileFlag = true
-        while (whileFlag) {
-            const { done, value } = await reader.read();
-            if (done) {
+        const streamIns = new FetchStream({
+            url: APIBASEURL + url,
+            requestInit: { // fetch 配置项
+                body: JSON.stringify(params),
+            },
+            onmessage: (content) => {
+                output += content
+                callback && callback(output)
+            },
+            undone: () => {
                 callbackDone && callbackDone(true)
-                whileFlag = false
-                break
-            }
-            const chunkText = textDecoder.decode(value);
-            output += chunkText;
-            callback(output)
-        }
+            },
+        });
+        return streamIns
     }
     return {
-        streamRead
+        fetchStream
     }
 }
